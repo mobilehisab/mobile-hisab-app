@@ -1,7 +1,8 @@
 <!DOCTYPE html>
+- Index v185 — Added 1TB storage option; persisted rent-paid months; capitalized phone-specific expenses into phone cost/profit rather than general expenses; normalized legacy iPhone brand filter label to Apple; added master ads ON/OFF, multiple-ad rotation, and startup cooldown to prevent an immediate post-loading ad.
 <!--
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
-Current file version: Index v183 - Firebase Ads Cloud Sync Binding Fix - 14 Nov 2026 • 09:25 AM PKT
+Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotation - 16 Nov 2026 • 09:00 AM PKT
 - Index v174 — Manual Splash Ads Manager — 14 Nov 2026 • 07:57 AM PKT. Added a Settings manager for multiple manual image ads with optional heading, description, contact, advertiser, fee/payment status and expiry. The selected enabled ad appears as a clearly marked Sponsored card on the session loading screen. Ads are device-local; no Firestore schema/rules or cloud publishing changed.
 
 - Index v121 — Bilingual English / Urdu Language Selector — 06 Nov 2026 • 11:06 AM PKT. Added a persistent English/Urdu selector in the header and CSV-driven Urdu text translations. English remains the default. Existing app workflows, Firebase/Firestore integration, data schema, calculations and business logic are retained.
@@ -3385,6 +3386,7 @@ body.mh-urdu-mode .date-time-field.is-unknown .date-time-control-row::before { c
         <div class="settings-section-card">
           <div class="settings-note" style="margin-top:0;">Loading screen par paid business advertisements manage karein. Ad image ke saath heading, description aur contact number optional hain.</div>
           <div class="settings-note" id="splashAdCloudStatus">Advertisements cloud se sync hone ka intezar kar rahi hain…</div>
+          <label style="display:flex;align-items:center;gap:10px;font-weight:800;margin:12px 0;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);"><input id="splashAdsMasterEnabled" type="checkbox" style="width:20px;height:20px;"> Enable advertisements (OFF karne se tamam ads band ho jayenge)</label>
           <div class="field"><label>Normal loading ke baad extra ad time (seconds)</label><input id="splashAdExtraSeconds" type="number" min="0" max="120" step="1" inputmode="numeric" value="0" placeholder="0"><div class="settings-note">0 = extra time nahi. Tum 1 se 120 seconds tak apni marzi se set kar sakte ho. Ye extra time sirf tab lagega jab active ad ho aur latest data loading complete ho chuki ho.</div></div>
           <div class="splash-template-tools" style="margin-top:12px;">
             <strong>App use karte waqt scheduled advertisements</strong>
@@ -3709,7 +3711,7 @@ window.addEventListener('popstate', function(){
 const BRANDS = ['Samsung','Google','Apple','OnePlus','Vivo','Oppo','Realme','Infinix','Tecno','Xiaomi','Motorola','ZTE','Itel','Honor','Sparx','SEGO','Other'];
 const STATUS_OPTS = ['PTA','Non-PTA','CPID/Patch','Factory Unlock','JV/Sim locked','Bypass/MDM'];
 const RAM_OPTS = ['2GB','3GB','4GB','6GB','8GB','12GB','16GB'];
-const STORAGE_OPTS = ['32GB','64GB','128GB','256GB','512GB'];
+const STORAGE_OPTS = ['32GB','64GB','128GB','256GB','512GB','1TB'];
 const NETWORK_OPTS = ['4G','5G'];
 const CONDITION_OPTS = ['10/10','9.5/10','9/10','8.5/10','8/10','7.5/10','7/10','6.5/10','6/10','5.5/10','5/10','4.5/10','4/10','3.5/10','3/10','2.5/10','2/10','1.5/10','1/10'];
 const DISPLAY_OPTS = ['Original panel','Minor shade','Minor lines','Line','Dark spots','Minor spot','Light spot','Scratches','Cracked','Glass changed','Panel changed','Changed but genuine'];
@@ -5312,19 +5314,21 @@ function entryTotalCost(e){
 function saleBaseProfit(e){
   if(!e || e.buy==null || e.sell==null || isReturnedSale(e)) return 0;
   const qty=Math.max(1,Number(e.quantity)||1);
-  const fullProfit=(Number(e.sell)-Number(e.buy))*qty;
+  const phoneCost=expenseArrayTotal(e.phoneExpenses)+expenseArrayTotal(e.saleExpenses);
+  const fullProfit=(Number(e.sell)-Number(e.buy))*qty-phoneCost;
   // Profit is recognized only as received money exceeds the phone's purchase cost.
   // Example: cost 20,000, sale 23,000, received 21,000 => recognized profit 1,000.
   const saleTotal=Number(e.saleTotal!=null?e.saleTotal:(Number(e.sell)||0)*qty);
   const received=Math.max(0,Math.min(saleTotal,Number(e.paymentReceived!=null?e.paymentReceived:saleTotal)));
-  const cost=Math.max(0,(Number(e.buy)||0)*qty);
+  const cost=Math.max(0,(Number(e.buy)||0)*qty+phoneCost);
   const realized=Math.max(0,received-cost);
   return Math.min(Math.max(0,fullProfit),realized);
 }
 function saleNetProfit(e){
   if(!e || e.buy==null || e.sell==null) return null;
   if(isReturnedSale(e)) return 0;
-  return saleBaseProfit(e)-phoneExpensesTotal(e);
+  // Phone expenses are already included in saleBaseProfit as part of this phone's cost.
+  return saleBaseProfit(e);
 }
 function activityDateMatches(e, type, from, to){
   function inRange(d){
@@ -5531,10 +5535,9 @@ function dashboardDateInRange(value, range){
   return (!range.from||d>=range.from)&&(!range.to||d<=range.to);
 }
 function expensesForDashboardRange(range){
-  let total=0;
-  expensesInRange(range.from,range.to).forEach(function(x){ total+=Number(x.amount)||0; });
-  allPhoneExpenseEntries().forEach(function(x){ if(dashboardDateInRange(x.date,range)) total+=Number(x.amount)||0; });
-  return total;
+  // Only shop/business expenses belong in this total. Phone-specific costs
+  // are capitalized into each phone's cost and deducted in saleBaseProfit.
+  return expensesInRange(range.from,range.to).reduce(function(total,x){return total+(Number(x.amount)||0);},0);
 }
 function openDashboardDatePicker(){
   const picker=document.createElement('input');
@@ -5622,7 +5625,7 @@ function renderStats(){
   if(profitCard){
     profitCard.classList.toggle('rent-profit-stat',shopProfile.rentType==='rented');
     if(shopProfile.rentType==='rented'){
-      const paid=(Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths:[]).includes(rentMonthKey(new Date()));
+      const paid=isRentPaidForMonth(rentMonthKey(new Date()));
       const rentBadgeHtml='<small data-rent-corner-badge class="rent-corner-badge '+(paid?'is-paid':'is-unpaid')+'">'+(paid?'Rent Paid':'Rent Unpaid')+'</small>';const profitLabel=profitCard.querySelector('.l');if(profitLabel)profitLabel.insertAdjacentHTML('afterend',rentBadgeHtml);else profitCard.insertAdjacentHTML('beforeend',rentBadgeHtml);
     }
   }
@@ -5677,7 +5680,7 @@ function renderBrandFilter(){
   // Always show every known brand (even with 0 stock right now), plus any
   // custom/other brand names actually present in the data.
   const allBrands = getLiveBrands().filter(function(b){ return b!=='Other'; }).concat(invBrands);
-  const distinct = allBrands.filter(function(b,i){return b && allBrands.indexOf(b)===i;});
+  const distinct = allBrands.map(function(b){return b==='iPhone'?'Apple':b;}).filter(function(b,i,a){return b && a.indexOf(b)===i;});
   // Rank brands by total saved pieces, so a brand with 2 phones in one
   // quantity=2 entry still appears above a brand with only 1 phone.
   const entryCount = {};
@@ -5693,7 +5696,8 @@ function renderBrandFilter(){
   });
   const wrap = document.getElementById('brandFilterChips');
   const isCombinedAdminView = (userRole==='admin' && adminViewActive && adminViewShopId==='__combined__');
-  const activeBrandFilter = isCombinedAdminView ? adminCombinedBrandFilter : currentBrandFilter;
+  const activeBrandFilterRaw = isCombinedAdminView ? adminCombinedBrandFilter : currentBrandFilter;
+  const activeBrandFilter = activeBrandFilterRaw==='iPhone'?'Apple':activeBrandFilterRaw;
   wrap.innerHTML = '<button type="button" class="chip '+(activeBrandFilter==='all'?'active':'')+'" data-brand="all">All brands</button>' +
     distinct.map(function(b){
       return '<button type="button" class="chip '+(activeBrandFilter===b?'active':'')+'" data-brand="'+b+'">'+b+'</button>';
@@ -5774,8 +5778,9 @@ function renderList(){
     if(currentFilter==='sold' && (!e.sold || isReturnedSale(e))) return false;
     if(currentFilter==='returned' && !isReturnedSale(e)) return false;
     if(STATUS_OPTS.indexOf(currentFilter)!==-1 && normalizeStatusValue(e.statusDetail || e.status)!==currentFilter) return false;
-    const activeBrandFilter = (userRole==='admin' && adminViewActive && adminViewShopId==='__combined__') ? adminCombinedBrandFilter : currentBrandFilter;
-    if(activeBrandFilter!=='all' && e.brand!==activeBrandFilter) return false;
+    const activeBrandFilterRaw = (userRole==='admin' && adminViewActive && adminViewShopId==='__combined__') ? adminCombinedBrandFilter : currentBrandFilter;
+    const activeBrandFilter = activeBrandFilterRaw==='iPhone'?'Apple':activeBrandFilterRaw;
+    if(activeBrandFilter!=='all' && (activeBrandFilter==='Apple' ? (e.brand!=='Apple' && e.brand!=='iPhone') : e.brand!==activeBrandFilter)) return false;
     if(searchVal){
       const hay = (e.brand+' '+e.model+' '+(e.customer||'')+' '+(e.customerNumber||'')+' '+(e.imei||'')+' '+(e.sellerName||'')+' '+(e.sellerNumber||'')+' '+(e.notes||'')).toLowerCase();
       if(hay.indexOf(searchVal)===-1) return false;
@@ -8996,7 +9001,7 @@ function renderRentInfoCardHtml(context, profitBeforeRent){
   if(shopProfile.rentType!=='rented'||!(Number(shopProfile.monthlyRent)>0)){
     return context==='dashboard'?'':'<div class="settings-note">Apni shop selected hai — monthly rent applicable nahi.</div>';
   }
-  const now=new Date(),key=rentMonthKey(now),paid=(Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths:[]).includes(key);
+  const now=new Date(),key=rentMonthKey(now),paid=isRentPaidForMonth(key);
   const amount=Number(shopProfile.monthlyRent)||0,day=Math.min(31,Math.max(1,Number(shopProfile.rentDueDay)||1));
   const status=paid?'Rent Paid':'Rent Unpaid',color=paid?'#15803d':'#dc2626';
   const adjusted=Number(profitBeforeRent||0)-(paid?0:amount);
@@ -9010,7 +9015,7 @@ function renderRentInfoCardHtml(context, profitBeforeRent){
   return '<div style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)">'+body+'</div>';
 }
 function renderRentInfoSurfaces(){
-  const paid=(Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths:[]).includes(rentMonthKey(new Date()));
+  const paid=isRentPaidForMonth(rentMonthKey(new Date()));
   const dashboardProfitEl=document.querySelector('#stats .stat:nth-child(5)');
   if(dashboardProfitEl){
     dashboardProfitEl.classList.toggle('rent-profit-stat',shopProfile.rentType==='rented');
@@ -9034,7 +9039,7 @@ function renderDashboard(){
   const grossProfit=soldPeriod.filter(function(e){return e.buy!=null&&e.sell!=null;}).reduce(function(s,e){return s+saleBaseProfit(e);},0);
   const periodExpenses=expensesForDashboardRange(range);
   const netProfit=grossProfit-periodExpenses;
-  const totalExpensesAll=totalExpensesAllTime()+totalPhoneExpensesAllTime();
+  const totalExpensesAll=totalExpensesAllTime();
   const allTimeProfit=soldItems.filter(function(e){return e.buy!=null&&e.sell!=null;}).reduce(function(s,e){return s+saleBaseProfit(e);},0);
   const netProfitAllTime=allTimeProfit-totalExpensesAll;
   const cards=[
@@ -9521,7 +9526,7 @@ function analyticsDifferenceHtml(curr,prev,key){
   return '<span class="analytics-diff">'+sign+(key==='soldUnits'||key==='purchasedUnits'?Math.abs(Math.round(diff)):'Rs '+fmt(Math.abs(diff)))+' vs previous</span>';
 }
 function analyticsRenderScoreboard(curr,prev){
-  const cards=[['Profit',curr.netProfit,prev&&prev.netProfit,'profit','Net profit <span data-rent-profit-status class="rent-status-badge '+(shopProfile.rentType==='rented'&&!(Array.isArray(shopProfile.rentPaidMonths)&&shopProfile.rentPaidMonths.includes(rentMonthKey(new Date())))?'is-unpaid':'is-paid')+'">'+(shopProfile.rentType==='rented'&&!(Array.isArray(shopProfile.rentPaidMonths)&&shopProfile.rentPaidMonths.includes(rentMonthKey(new Date())))?'Rent Unpaid':'Rent Paid')+'</span>'],['Mobiles sold',curr.soldUnits,prev&&prev.soldUnits,'soldUnits','Units sold'],['Mobiles purchased',curr.purchasedUnits,prev&&prev.purchasedUnits,'purchasedUnits','Units purchased'],['Sale',curr.saleAmount,prev&&prev.saleAmount,'sales','Sales volume'],['Purchase',curr.purchaseAmount,prev&&prev.purchaseAmount,'purchases','Investment in phones'],['Expenses',curr.expenses,prev&&prev.expenses,'expenses','Total business expenses']];
+  const cards=[['Profit',curr.netProfit,prev&&prev.netProfit,'profit','Net profit <span data-rent-profit-status class="rent-status-badge '+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'is-unpaid':'is-paid')+'">'+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'Rent Unpaid':'Rent Paid')+'</span>'],['Mobiles sold',curr.soldUnits,prev&&prev.soldUnits,'soldUnits','Units sold'],['Mobiles purchased',curr.purchasedUnits,prev&&prev.purchasedUnits,'purchasedUnits','Units purchased'],['Sale',curr.saleAmount,prev&&prev.saleAmount,'sales','Sales volume'],['Purchase',curr.purchaseAmount,prev&&prev.purchaseAmount,'purchases','Investment in phones'],['Expenses',curr.expenses,prev&&prev.expenses,'expenses','Total business expenses']];
   document.getElementById('analyticsScoreboard').innerHTML=cards.map(function(c){
     const pv=c[2]==null?null:c[2], avg=c[3]==='profit'?(curr.soldUnits?curr.netProfit/curr.soldUnits:0):null, avgPrev=c[3]==='profit'&&prev?(prev.soldUnits?prev.netProfit/prev.soldUnits:0):null;
     const sub=c[3]==='profit'?'Avg profit / mobile: Rs '+fmt(avg):(c[3]==='purchases'&&curr.purchasedUnits===0?'No purchases recorded':(c[3]==='sales'&&curr.soldUnits===0?'No sales recorded':c[4]));
@@ -9792,7 +9797,7 @@ function analyticsRenderSnapshot(range,curr){
   const lifetimeSold=inventory.filter(function(e){return e.sold&&!isReturnedSale(e);}).reduce(function(s,e){return s+(Number(e.quantity)||0);},0);
   const totalStockValue=stockItems.reduce(function(s,e){return s+(Number(e.buy)||0)*(Number(e.quantity)||0);},0);
   const allTimeProfit=inventory.filter(function(e){return e.sold&&!isReturnedSale(e)&&e.buy!=null&&e.sell!=null;}).reduce(function(s,e){return s+saleBaseProfit(e);},0);
-  const lifetimeExpenses=totalExpensesAllTime()+totalPhoneExpensesAllTime();
+  const lifetimeExpenses=totalExpensesAllTime();
   const lifetimeNetProfit=allTimeProfit-lifetimeExpenses;
   const cards=[
     ['Stock value','Rs '+fmt(totalStockValue)],
@@ -11346,11 +11351,24 @@ document.getElementById('settingsSaveShopProfile').onclick=function(){
   },450);
 };
 document.getElementById('settings-rent-type').addEventListener('change',function(){document.getElementById('settings-rent-fields').style.display=this.value==='rented'?'block':'none';});
+const LS_RENT_PAID_MONTHS_KEY='mobileLedger_rentPaidMonths_v1';
+function getRentPaidMonths(){
+  const months=Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths.slice():[];
+  try{const saved=JSON.parse(localStorage.getItem(shopStorageKey(LS_RENT_PAID_MONTHS_KEY))||'[]');if(Array.isArray(saved))saved.forEach(function(k){if(months.indexOf(k)===-1)months.push(k);});}catch(e){}
+  return months;
+}
+function isRentPaidForMonth(key){return getRentPaidMonths().indexOf(key)!==-1;}
+function saveRentPaidMonths(months){
+  const clean=Array.from(new Set((Array.isArray(months)?months:[]).map(String)));
+  shopProfile.rentPaidMonths=clean;
+  try{localStorage.setItem(shopStorageKey(LS_SHOP_PROFILE_KEY),JSON.stringify(shopProfile));}catch(e){}
+  try{localStorage.setItem(shopStorageKey(LS_RENT_PAID_MONTHS_KEY),JSON.stringify(clean));}catch(e){}
+}
 function rentMonthKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 function renderRentReminder(){
   let el=document.getElementById('rentReminderBanner');
   if(!el){el=document.createElement('div');el.id='rentReminderBanner';el.style.cssText='display:none;margin:8px 12px;padding:10px 12px;border:1px solid #fecaca;border-radius:10px;background:#fff7f7;color:#991b1b;font-size:12px;font-weight:700;';const app=document.querySelector('.app');const searchRow=app&&app.querySelector('.search-row');if(app)app.insertBefore(el,searchRow||null);}
-  const now=new Date(),key=rentMonthKey(now),due=Math.min(31,Math.max(1,Number(shopProfile.rentDueDay)||1)),dueDate=new Date(now.getFullYear(),now.getMonth(),due);const paid=(Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths:[]).includes(key);const active=shopProfile.rentType==='rented'&&Number(shopProfile.monthlyRent)>0&&shopProfile.rentReminderEnabled!==false&&!paid;
+  const now=new Date(),key=rentMonthKey(now),due=Math.min(31,Math.max(1,Number(shopProfile.rentDueDay)||1)),dueDate=new Date(now.getFullYear(),now.getMonth(),due);const paid=isRentPaidForMonth(key);const active=shopProfile.rentType==='rented'&&Number(shopProfile.monthlyRent)>0&&shopProfile.rentReminderEnabled!==false&&!paid;
   if(!active){el.style.display='none';return;}
   const days=Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(dueDate.getFullYear(),dueDate.getMonth(),dueDate.getDate()))/86400000);
   if(days<0){el.style.display='none';return;}
@@ -11366,14 +11384,14 @@ function renderRentReminder(){
 function confirmCurrentRentPaid(){
   if(isAdminShopView()){alert('Admin Shop view read-only hai.');return;}
   if(shopProfile.rentType!=='rented'||!(Number(shopProfile.monthlyRent)>0)){showToast('Pehle Settings mein rent ki details save karein.');return;}
-  const now=new Date(),key=rentMonthKey(now),paid=Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths.slice():[];if(paid.includes(key)){showToast('Is month ka rent pehle hi paid mark hai.');return;}
+  const now=new Date(),key=rentMonthKey(now),paid=getRentPaidMonths();if(paid.includes(key)){showToast('Is month ka rent pehle hi paid mark hai.');return;}
   const date=isoDateLocal(now),entry={id:createUniqueRecordId('exp',expenses),category:'Rent',amount:Number(shopProfile.monthlyRent),date:date,notes:'Monthly rent · '+key,autoRent:true,rentMonth:key};
   const ok=tryCommitExpenses(expenses.concat([entry]));if(!ok){showToast('Rent expense save nahi hua. Dobara try karein.');return;}
-  shopProfile.rentPaidMonths=paid.concat([key]);try{localStorage.setItem(shopStorageKey(LS_SHOP_PROFILE_KEY),JSON.stringify(shopProfile));}catch(e){}schedulePush();renderRentReminder();showToast('✓ Rent paid confirm ho gaya aur expense add ho gaya.');
+  saveRentPaidMonths(paid.concat([key]));schedulePush();renderRentReminder();renderBeforeAfterRentStatus();renderStats();renderDashboard();renderRentInfoSurfaces();showToast('✓ Rent paid confirm ho gaya aur expense add ho gaya.');
 }
 document.getElementById('settings-rent-paid').onclick=confirmCurrentRentPaid;
 function renderBeforeAfterRentStatus(){
- const now=new Date(),key=rentMonthKey(now),paid=(Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths:[]).includes(key);document.querySelectorAll('[data-rent-profit-status]').forEach(function(el){el.textContent=shopProfile.rentType==='rented'?(paid?'Rent Paid':'Rent Unpaid'):'';el.classList.toggle('is-paid',paid);el.classList.toggle('is-unpaid',!paid);});
+ const now=new Date(),key=rentMonthKey(now),paid=isRentPaidForMonth(key);document.querySelectorAll('[data-rent-profit-status]').forEach(function(el){el.textContent=shopProfile.rentType==='rented'?(paid?'Rent Paid':'Rent Unpaid'):'';el.classList.toggle('is-paid',paid);el.classList.toggle('is-unpaid',!paid);});
 }
 setInterval(renderRentReminder,60000);document.addEventListener('DOMContentLoaded',renderRentReminder);setTimeout(renderRentReminder,1200);
 
@@ -14179,9 +14197,9 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
     if(editorEl)editorEl.textContent=message;
   }
   function currentCloudPayload(){
-    let extra=0, schedule={gap:30,duration:5,daily:5}, templates=['','',''];
+    let extra=0, schedule={gap:30,duration:5,daily:5,enabled:true}, templates=['','',''];
     try{extra=Math.max(0,Math.min(120,Math.floor(Number(localStorage.getItem(EXTRA_KEY)||0))));}catch(e){}
-    try{const x=JSON.parse(localStorage.getItem(SCHEDULE_KEY)||'{}');schedule={gap:Math.max(30,Math.min(1440,Math.floor(Number(x.gap)||30))),duration:Math.max(5,Math.min(120,Math.floor(Number(x.duration)||5))),daily:Math.max(1,Math.min(50,Math.floor(Number(x.daily)||5)))}}catch(e){}
+    try{const x=JSON.parse(localStorage.getItem(SCHEDULE_KEY)||'{}');schedule={gap:Math.max(30,Math.min(1440,Math.floor(Number(x.gap)||30))),duration:Math.max(5,Math.min(120,Math.floor(Number(x.duration)||5))),daily:Math.max(1,Math.min(50,Math.floor(Number(x.daily)||5))),enabled:x.enabled!==false}}catch(e){}
     templates=readMessageTemplates();
     return {ads:ads,extraSeconds:extra,schedule:schedule,messageTemplates:templates,updatedAt:new Date().toISOString(),updatedBy:(getCloudUser()&&getCloudUser().email)||''};
   }
@@ -14195,7 +14213,7 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
       if(Array.isArray(data.messageTemplates))localStorage.setItem(MSG_TEMPLATES_KEY,JSON.stringify([0,1,2].map(i=>String(data.messageTemplates[i]||''))));
       renderList();splashRender();
       const ex=$('splashAdExtraSeconds');if(ex)ex.value=localStorage.getItem(EXTRA_KEY)||'0';
-      const cfg=readSchedule();[['splashAdRepeatGapMinutes',cfg.gap],['splashAdRepeatDurationSeconds',cfg.duration],['splashAdDailyLimit',cfg.daily]].forEach(([id,v])=>{if($(id))$(id).value=String(v);});
+      const cfg=readSchedule();[['splashAdRepeatGapMinutes',cfg.gap],['splashAdRepeatDurationSeconds',cfg.duration],['splashAdDailyLimit',cfg.daily]].forEach(([id,v])=>{if($(id))$(id).value=String(v);});if($('splashAdsMasterEnabled'))$('splashAdsMasterEnabled').checked=cfg.enabled;
       const state=$('splashAdScheduleStatus');if(state)state.textContent='Cloud settings: har '+cfg.gap+' minutes, '+cfg.duration+' seconds, rozana maximum '+cfg.daily+' ads.';
       const sel=$('splashAdMessageTemplateSelect');if(sel&&$('splashAdWhatsAppMessage')){const idx=Number(sel.value)||0,tm=readMessageTemplates();if(tm[idx])$('splashAdWhatsAppMessage').value=tm[idx];}
     }catch(e){console.warn('Apply cloud ads failed',e);}
@@ -14227,7 +14245,7 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
         const payload=currentCloudPayload();
         if(payload.ads.length)pushCloudPayload();
         else cloudStatus('Cloud ads ready. Pehla ad save karke Publish karein.');
-      }else{cloudReady=true;applyCloudPayload({ads:[],extraSeconds:0,schedule:{gap:30,duration:5,daily:5},messageTemplates:['','','']});cloudStatus('Abhi koi advertisement publish nahi hai.');}
+      }else{cloudReady=true;applyCloudPayload({ads:[],extraSeconds:0,schedule:{gap:30,duration:5,daily:5,enabled:true},messageTemplates:['','','']});cloudStatus('Abhi koi advertisement publish nahi hai.');}
     },err=>{console.error('Cloud ads read failed',err);cloudStatus('Cloud ads load nahi huay: '+(err.code||err.message||'permission/network error'));});
   }
 
@@ -14243,23 +14261,26 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
   function templateStatus(msg){const el=$('splashAdTemplateStatus');if(el)el.textContent=msg;}
   function loadMessageTemplate(){const sel=$('splashAdMessageTemplateSelect'),box=$('splashAdWhatsAppMessage');if(!sel||!box)return;const list=readMessageTemplates(),value=list[Number(sel.value)]||'';if(value){box.value=value;templateStatus('Template '+(Number(sel.value)+1)+' message editor mein load ho gaya.');}else{templateStatus('Ye template abhi khali hai. Message likh kar Save karein.');}}
   function saveMessageTemplate(){const sel=$('splashAdMessageTemplateSelect'),box=$('splashAdWhatsAppMessage');if(!sel||!box)return;const list=readMessageTemplates(),index=Math.max(0,Math.min(2,Number(sel.value)||0)),value=box.value.trim();if(!value){templateStatus('Pehle message likhein, phir save karein.');return;}list[index]=value;try{localStorage.setItem(MSG_TEMPLATES_KEY,JSON.stringify(list));templateStatus('Template '+(index+1)+' successfully save ho gaya.');pushCloudPayload();}catch(e){templateStatus('Template save nahi ho saka.');}}
-  function readSchedule(){try{const x=JSON.parse(localStorage.getItem(SCHEDULE_KEY)||'{}');return {gap:Math.max(30,Math.min(1440,Math.floor(Number(x.gap)||30))),duration:Math.max(5,Math.min(120,Math.floor(Number(x.duration)||5))),daily:Math.max(1,Math.min(50,Math.floor(Number(x.daily)||5)))}}catch(e){return {gap:30,duration:5,daily:5}}}
-  function saveSchedule(){const gap=Math.max(30,Math.min(1440,Math.floor(Number($('splashAdRepeatGapMinutes').value)||30))),duration=Math.max(5,Math.min(120,Math.floor(Number($('splashAdRepeatDurationSeconds').value)||5))),daily=Math.max(1,Math.min(50,Math.floor(Number($('splashAdDailyLimit').value)||5)));$('splashAdRepeatGapMinutes').value=gap;$('splashAdRepeatDurationSeconds').value=duration;$('splashAdDailyLimit').value=daily;const cfg={gap,duration,daily};try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(cfg));}catch(e){}pushCloudPayload();const st=$('splashAdScheduleStatus');if(st)st.textContent='Settings save ho gayi: har '+gap+' minutes baad, '+duration+' seconds ke liye, rozana maximum '+daily+' ads.';startScheduledAdScheduler();}
+  function readSchedule(){try{const x=JSON.parse(localStorage.getItem(SCHEDULE_KEY)||'{}');return {gap:Math.max(30,Math.min(1440,Math.floor(Number(x.gap)||30))),duration:Math.max(5,Math.min(120,Math.floor(Number(x.duration)||5))),daily:Math.max(1,Math.min(50,Math.floor(Number(x.daily)||5))),enabled:x.enabled!==false}}catch(e){return {gap:30,duration:5,daily:5,enabled:true}}}
+  function saveSchedule(){const gap=Math.max(30,Math.min(1440,Math.floor(Number($('splashAdRepeatGapMinutes').value)||30))),duration=Math.max(5,Math.min(120,Math.floor(Number($('splashAdRepeatDurationSeconds').value)||5))),daily=Math.max(1,Math.min(50,Math.floor(Number($('splashAdDailyLimit').value)||5)));$('splashAdRepeatGapMinutes').value=gap;$('splashAdRepeatDurationSeconds').value=duration;$('splashAdDailyLimit').value=daily;const cfg={gap,duration,daily,enabled:$('splashAdsMasterEnabled')?$('splashAdsMasterEnabled').checked:true};try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(cfg));}catch(e){}pushCloudPayload();const st=$('splashAdScheduleStatus');if(st)st.textContent='Settings save ho gayi: har '+gap+' minutes baad, '+duration+' seconds ke liye, rozana maximum '+daily+' ads.';startScheduledAdScheduler();}
   function getScheduleState(){try{const s=JSON.parse(localStorage.getItem(SCHEDULE_STATE_KEY)||'{}'),day=today();return s.day===day?s:{day,count:0,last:0};}catch(e){return {day:today(),count:0,last:0};}}
   function setScheduleState(s){try{localStorage.setItem(SCHEDULE_STATE_KEY,JSON.stringify(s));}catch(e){}}
   function closeScheduledAd(){const ov=$('mhScheduledAdOverlay');if(ov)ov.classList.remove('open');clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;}
-  function showScheduledAd(){if(document.visibilityState!=='visible'||!navigator.onLine)return;if($('mobileCloudStartupGate')?.classList.contains('active'))return;if($('mhReplayAdOverlay')?.classList.contains('open'))return;if(document.querySelector('.overlay.show,.modal.show'))return;const ad=ads.find(x=>x.enabled&&x.image&&(!x.expiry||x.expiry>=today()));if(!ad)return;const cfg=readSchedule(),state=getScheduleState();if(state.count>=cfg.daily)return;const now=Date.now();if(state.last&&now-state.last<cfg.gap*60000)return;state.last=now;state.count++;setScheduleState(state);splashRender();const ov=$('mhScheduledAdOverlay'),close=$('mhScheduledAdClose'),count=$('mhScheduledAdCountdown');if(!ov||!close||!count)return;ov.classList.add('open');close.disabled=true;let left=cfg.duration;count.textContent=String(left);close.textContent='Close ('+left+')';clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=setInterval(()=>{left--;count.textContent=String(Math.max(0,left));close.textContent=left>0?'Close ('+left+')':'Close';if(left<=0){clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;close.disabled=false;}},1000);}
+  function getEnabledAds(){return readSchedule().enabled?ads.filter(x=>x.enabled&&x.image&&(!x.expiry||x.expiry>=today())):[];}
+  function nextRotatingAd(state){const list=getEnabledAds();if(!list.length)return null;const lastIndex=list.findIndex(x=>x.id===state.lastAdId);return list[(lastIndex+1+list.length)%list.length];}
+  function showScheduledAd(){if(document.visibilityState!=='visible'||!navigator.onLine)return;const cfg=readSchedule();if(!cfg.enabled)return;if($('mobileCloudStartupGate')?.classList.contains('active'))return;if($('mhReplayAdOverlay')?.classList.contains('open'))return;if($('mhScheduledAdOverlay')?.classList.contains('open'))return;if(document.querySelector('.overlay.show,.modal.show'))return;const state=getScheduleState();if(state.count>=cfg.daily)return;const now=Date.now();if(!state.last){state.last=now;setScheduleState(state);return;}if(now-state.last<cfg.gap*60000)return;const ad=nextRotatingAd(state);if(!ad)return;state.last=now;state.lastAdId=ad.id;state.count++;setScheduleState(state);splashRender();const ov=$('mhScheduledAdOverlay'),close=$('mhScheduledAdClose'),count=$('mhScheduledAdCountdown'),card=$('mhScheduledAdCard');if(!ov||!close||!count||!card)return;renderAdInto(card,ad);ov.classList.add('open');close.disabled=true;let left=cfg.duration;count.textContent=String(left);close.textContent='Close ('+left+')';clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=setInterval(()=>{left--;count.textContent=String(Math.max(0,left));close.textContent=left>0?'Close ('+left+')':'Close';if(left<=0){clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;close.disabled=false;}},1000);}
   function startScheduledAdScheduler(){if(scheduledAdTimer)clearInterval(scheduledAdTimer);scheduledAdTimer=setInterval(showScheduledAd,15000);}
-  function initScheduledAds(){const cfg=readSchedule();[['splashAdRepeatGapMinutes',cfg.gap],['splashAdRepeatDurationSeconds',cfg.duration],['splashAdDailyLimit',cfg.daily]].forEach(([id,val])=>{const el=$(id);if(el)el.value=String(val);});['splashAdRepeatGapMinutes','splashAdRepeatDurationSeconds','splashAdDailyLimit'].forEach(id=>{const el=$(id);if(el){el.addEventListener('change',saveSchedule);el.addEventListener('input',()=>{const st=$('splashAdScheduleStatus');if(st)st.textContent='Changes save karne ke liye field se bahar click karein.';});}});const close=$('mhScheduledAdClose');if(close)close.onclick=closeScheduledAd;document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')showScheduledAd();});startScheduledAdScheduler();const st=$('splashAdScheduleStatus');if(st)st.textContent='Current: har '+cfg.gap+' minutes, '+cfg.duration+' seconds, rozana maximum '+cfg.daily+' ads.';}
+  function initScheduledAds(){const cfg=readSchedule();const initialState=getScheduleState();if(!initialState.last){initialState.last=Date.now();setScheduleState(initialState);}if($('splashAdsMasterEnabled'))$('splashAdsMasterEnabled').checked=cfg.enabled;[['splashAdRepeatGapMinutes',cfg.gap],['splashAdRepeatDurationSeconds',cfg.duration],['splashAdDailyLimit',cfg.daily]].forEach(([id,val])=>{const el=$(id);if(el)el.value=String(val);});['splashAdRepeatGapMinutes','splashAdRepeatDurationSeconds','splashAdDailyLimit'].forEach(id=>{const el=$(id);if(el){el.addEventListener('change',saveSchedule);el.addEventListener('input',()=>{const st=$('splashAdScheduleStatus');if(st)st.textContent='Changes save karne ke liye field se bahar click karein.';});}});const close=$('mhScheduledAdClose');if(close)close.onclick=closeScheduledAd;document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')showScheduledAd();});startScheduledAdScheduler();const st=$('splashAdScheduleStatus');if(st)st.textContent='Current: har '+cfg.gap+' minutes, '+cfg.duration+' seconds, rozana maximum '+cfg.daily+' ads.';}
 
 
   function setPreview(src){const im=$('splashAdImagePreview');if(!im)return;if(src){im.src=src;im.style.display='block';}else{im.removeAttribute('src');im.style.display='none';}}
   function clearForm(){selectedId='';pendingImage='';['splashAdAdvertiser','splashAdHeading','splashAdDescription','splashAdContact','splashAdWhatsApp','splashAdWhatsAppMessage','splashAdFee','splashAdExpiry'].forEach(id=>{if($(id))$(id).value='';});$('splashAdWhatsAppMessage').value=defaultMessage;if($('splashAdPayment'))$('splashAdPayment').value='unpaid';if($('splashAdEnabled'))$('splashAdEnabled').checked=false;if($('splashAdImageFile'))$('splashAdImageFile').value='';setPreview('');if($('splashAdSelect'))$('splashAdSelect').value='';status('Naya advertisement banayein.');}
   function fillForm(id){const a=byId(id);if(!a){clearForm();return;}selectedId=a.id;pendingImage=a.image||'';$('splashAdAdvertiser').value=a.advertiser||'';$('splashAdHeading').value=a.heading||'';$('splashAdDescription').value=a.description||'';$('splashAdContact').value=a.contact||'';$('splashAdWhatsApp').value=a.whatsapp||'';$('splashAdWhatsAppMessage').value=a.whatsappMessage||defaultMessage;$('splashAdFee').value=a.fee||'';$('splashAdPayment').value=a.payment||'unpaid';$('splashAdExpiry').value=a.expiry||'';$('splashAdEnabled').checked=!!a.enabled;$('splashAdSelect').value=a.id;setPreview(a.image||'');if($('splashAdImageFile'))$('splashAdImageFile').value='';status('Selected: '+(a.advertiser||a.heading||'Advertisement'));}
   function renderList(){const sel=$('splashAdSelect');if(!sel)return;const keep=selectedId;sel.innerHTML='<option value="">New advertisement</option>';ads.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=(a.advertiser||a.heading||'Advertisement')+(a.enabled?' • ON':' • OFF');sel.appendChild(o);});sel.value=byId(keep)?keep:'';}
-  function splashRender(){const hosts=[$('sessionSplashAd'),$('mobileCloudStartupGateAd'),$('mhReplayAdCard'),$('mhScheduledAdCard')].filter(Boolean);if(!hosts.length)return;const a=ads.find(x=>x.enabled&&x.image&&(!x.expiry||x.expiry>=today()));const startupGate=$('mobileCloudStartupGate');if(startupGate)startupGate.classList.toggle('ad-first-mode',!!a);hosts.forEach(host=>{if(!a){host.style.display='none';host.innerHTML='';return;}host.innerHTML='';host.style.display='block';const tag=document.createElement('div');tag.className='splash-ad-tag';tag.textContent='SPONSORED';host.appendChild(tag);const im=document.createElement('img');im.src=a.image;im.alt=(a.advertiser||'Sponsored advertisement');host.appendChild(im);if(a.heading){const h=document.createElement('h3');h.textContent=a.heading;host.appendChild(h);}if(a.description){const p=document.createElement('p');p.textContent=a.description;host.appendChild(p);}if(a.contact){const c=document.createElement('a');c.className='splash-ad-contact';c.href='tel:'+a.contact.replace(/[^+\\d]/g,'');c.textContent='Call: '+a.contact;host.appendChild(c);}if(a.whatsapp){const w=document.createElement('a');w.className='splash-ad-whatsapp';let digits=a.whatsapp.replace(/\\D/g,'');if(digits.startsWith('00'))digits=digits.slice(2);if(digits.startsWith('0'))digits='92'+digits.slice(1);else if(!digits.startsWith('92'))digits='92'+digits;w.href='https://wa.me/'+digits+'?text='+encodeURIComponent((a.whatsappMessage||'السلام علیکم! میں نے آپ کا اشتہار موبائل حساب ایپ پر دیکھا ہے۔ مجھے آپ کی سروس/پروڈکٹ کے بارے میں مزید معلومات چاہیے۔ براہِ کرم تفصیلات بتا دیں۔ شکریہ۔').trim());w.target='_blank';w.rel='noopener noreferrer';w.textContent='WhatsApp: '+a.whatsapp;host.appendChild(w);}if(a.advertiser){const b=document.createElement('div');b.className='splash-ad-business';b.textContent=a.advertiser;host.appendChild(b);}});const replayBtn=$('mhReplayAdButton');if(replayBtn)replayBtn.style.display=a?'block':'none';}
+  function renderAdInto(host,a){if(!host)return;host.innerHTML='';if(!a){host.style.display='none';return;}host.style.display='block';const tag=document.createElement('div');tag.className='splash-ad-tag';tag.textContent='SPONSORED';host.appendChild(tag);const im=document.createElement('img');im.src=a.image;im.alt=(a.advertiser||'Sponsored advertisement');host.appendChild(im);if(a.heading){const h=document.createElement('h3');h.textContent=a.heading;host.appendChild(h);}if(a.description){const p=document.createElement('p');p.textContent=a.description;host.appendChild(p);}if(a.contact){const c=document.createElement('a');c.className='splash-ad-contact';c.href='tel:'+a.contact.replace(/[^+\d]/g,'');c.textContent='Call: '+a.contact;host.appendChild(c);}if(a.whatsapp){const w=document.createElement('a');w.className='splash-ad-whatsapp';let digits=a.whatsapp.replace(/\D/g,'');if(digits.startsWith('00'))digits=digits.slice(2);if(digits.startsWith('0'))digits='92'+digits.slice(1);else if(!digits.startsWith('92'))digits='92'+digits;w.href='https://wa.me/'+digits+'?text='+encodeURIComponent((a.whatsappMessage||'السلام علیکم! میں نے آپ کا اشتہار موبائل حساب ایپ پر دیکھا ہے۔ مجھے آپ کی سروس/پروڈکٹ کے بارے میں مزید معلومات چاہیے۔ براہِ کرم تفصیلات بتا دیں۔ شکریہ۔').trim());w.target='_blank';w.rel='noopener noreferrer';w.textContent='WhatsApp: '+a.whatsapp;host.appendChild(w);}if(a.advertiser){const b=document.createElement('div');b.className='splash-ad-business';b.textContent=a.advertiser;host.appendChild(b);}}
+  function splashRender(){const hosts=[$('sessionSplashAd'),$('mobileCloudStartupGateAd'),$('mhReplayAdCard'),$('mhScheduledAdCard')].filter(Boolean);if(!hosts.length)return;const list=getEnabledAds(),a=nextRotatingAd(getScheduleState())||list[0]||null;const startupGate=$('mobileCloudStartupGate');if(startupGate)startupGate.classList.toggle('ad-first-mode',!!a);hosts.forEach(host=>renderAdInto(host,a));const replayBtn=$('mhReplayAdButton');if(replayBtn)replayBtn.style.display=a?'block':'none';}
   function compressImage(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('Image read nahi ho saki.'));reader.onload=()=>{const img=new Image();img.onerror=()=>reject(Error('Valid image select karein.'));img.onload=()=>{const scale=Math.min(1,1200/img.width,1000/img.height),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',.78));};img.src=reader.result;};reader.readAsDataURL(file);});}
-  function init(){ads=read();initScheduledAds();
+  function init(){ads=read();initScheduledAds();const master=$('splashAdsMasterEnabled');if(master)master.onchange=()=>{const cfg=readSchedule();cfg.enabled=master.checked;try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(cfg));}catch(e){}if(!cfg.enabled)closeScheduledAd();splashRender();pushCloudPayload();const st=$('splashAdScheduleStatus');if(st)st.textContent=cfg.enabled?'Advertisements ON hain.':'Tamam advertisements OFF kar diye gaye hain.';};
     if(typeof firebase!=='undefined'&&typeof firebase.auth==='function'){
       try{firebase.auth().onAuthStateChanged(user=>{if(user){startCloudAdsSync();}else{if(cloudUnsubscribe){cloudUnsubscribe();cloudUnsubscribe=null;}cloudReady=false;}});}catch(e){console.warn('Cloud ads auth listener unavailable',e);}
     }
@@ -14275,7 +14296,7 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
     if($('splashAdSelect'))$('splashAdSelect').onchange=e=>fillForm(e.target.value);
     if($('splashAdNew'))$('splashAdNew').onclick=clearForm;
     if($('splashAdImageFile'))$('splashAdImageFile').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){status('Image file select karein.');return;}try{pendingImage=await compressImage(f);setPreview(pendingImage);status('Image ready. Save Advertisement dabayein.');}catch(err){status(err.message||'Image process nahi hui.');}};
-    if($('splashAdSave'))$('splashAdSave').onclick=()=>{const image=pendingImage||(byId(selectedId)||{}).image||'';if(!image){status('Advertisement image upload karna zaroori hai.');return;}const a={id:selectedId||('ad_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)),advertiser:$('splashAdAdvertiser').value.trim(),image,heading:$('splashAdHeading').value.trim(),description:$('splashAdDescription').value.trim(),contact:$('splashAdContact').value.trim(),whatsapp:$('splashAdWhatsApp').value.trim(),whatsappMessage:$('splashAdWhatsAppMessage').value.trim(),fee:Math.max(0,Number($('splashAdFee').value)||0),payment:$('splashAdPayment').value,expiry:$('splashAdExpiry').value,enabled:$('splashAdEnabled').checked,updatedAt:new Date().toISOString()};const ix=ads.findIndex(x=>x.id===a.id);if(ix>=0)ads[ix]=a;else ads.push(a);if(a.enabled)ads.forEach(x=>{if(x.id!==a.id)x.enabled=false;});try{write();selectedId=a.id;renderList();fillForm(a.id);splashRender();pushCloudPayload();status('Advertisement save ho gaya. Cloud par publish ho raha hai…');}catch(e){status('Storage full ho sakti hai. Chhoti image upload karein.');}};
+    if($('splashAdSave'))$('splashAdSave').onclick=()=>{const image=pendingImage||(byId(selectedId)||{}).image||'';if(!image){status('Advertisement image upload karna zaroori hai.');return;}const a={id:selectedId||('ad_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)),advertiser:$('splashAdAdvertiser').value.trim(),image,heading:$('splashAdHeading').value.trim(),description:$('splashAdDescription').value.trim(),contact:$('splashAdContact').value.trim(),whatsapp:$('splashAdWhatsApp').value.trim(),whatsappMessage:$('splashAdWhatsAppMessage').value.trim(),fee:Math.max(0,Number($('splashAdFee').value)||0),payment:$('splashAdPayment').value,expiry:$('splashAdExpiry').value,enabled:$('splashAdEnabled').checked,updatedAt:new Date().toISOString()};const ix=ads.findIndex(x=>x.id===a.id);if(ix>=0)ads[ix]=a;else ads.push(a);try{write();selectedId=a.id;renderList();fillForm(a.id);splashRender();pushCloudPayload();status('Advertisement save ho gaya. Cloud par publish ho raha hai…');}catch(e){status('Storage full ho sakti hai. Chhoti image upload karein.');}};
     if($('splashAdDelete'))$('splashAdDelete').onclick=()=>{if(!selectedId){status('Delete karne ke liye saved ad select karein.');return;}if(!confirm('Is advertisement ko delete kar dein?'))return;ads=ads.filter(x=>x.id!==selectedId);try{write();clearForm();renderList();splashRender();pushCloudPayload();status('Advertisement delete ho gaya. Cloud par update ho raha hai…');}catch(e){status('Delete save nahi ho saka.');}};
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
