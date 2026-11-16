@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-- Index v185 — Added 1TB storage option; persisted rent-paid months; capitalized phone-specific expenses into phone cost/profit rather than general expenses; normalized legacy iPhone brand filter label to Apple; added master ads ON/OFF, multiple-ad rotation, and startup cooldown to prevent an immediate post-loading ad.
 <!--
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
 Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotation - 16 Nov 2026 • 09:00 AM PKT
@@ -11355,6 +11354,13 @@ const LS_RENT_PAID_MONTHS_KEY='mobileLedger_rentPaidMonths_v1';
 function getRentPaidMonths(){
   const months=Array.isArray(shopProfile.rentPaidMonths)?shopProfile.rentPaidMonths.slice():[];
   try{const saved=JSON.parse(localStorage.getItem(shopStorageKey(LS_RENT_PAID_MONTHS_KEY))||'[]');if(Array.isArray(saved))saved.forEach(function(k){if(months.indexOf(k)===-1)months.push(k);});}catch(e){}
+  // A saved auto-rent expense is also authoritative evidence that this month was paid.
+  // This recovers the Paid state if an older/stale cloud profile overwrote the month list.
+  (Array.isArray(expenses)?expenses:[]).forEach(function(e){
+    if(!e || !(e.autoRent || String(e.category||'').trim().toLowerCase()==='rent')) return;
+    const month=String(e.rentMonth||((e.date||'').slice(0,7))||'');
+    if(month && months.indexOf(month)===-1) months.push(month);
+  });
   return months;
 }
 function isRentPaidForMonth(key){return getRentPaidMonths().indexOf(key)!==-1;}
@@ -11384,10 +11390,13 @@ function renderRentReminder(){
 function confirmCurrentRentPaid(){
   if(isAdminShopView()){alert('Admin Shop view read-only hai.');return;}
   if(shopProfile.rentType!=='rented'||!(Number(shopProfile.monthlyRent)>0)){showToast('Pehle Settings mein rent ki details save karein.');return;}
-  const now=new Date(),key=rentMonthKey(now),paid=getRentPaidMonths();if(paid.includes(key)){showToast('Is month ka rent pehle hi paid mark hai.');return;}
-  const date=isoDateLocal(now),entry={id:createUniqueRecordId('exp',expenses),category:'Rent',amount:Number(shopProfile.monthlyRent),date:date,notes:'Monthly rent · '+key,autoRent:true,rentMonth:key};
-  const ok=tryCommitExpenses(expenses.concat([entry]));if(!ok){showToast('Rent expense save nahi hua. Dobara try karein.');return;}
-  saveRentPaidMonths(paid.concat([key]));schedulePush();renderRentReminder();renderBeforeAfterRentStatus();renderStats();renderDashboard();renderRentInfoSurfaces();showToast('✓ Rent paid confirm ho gaya aur expense add ho gaya.');
+  const now=new Date(),key=rentMonthKey(now),paid=getRentPaidMonths();if(paid.includes(key)){saveRentPaidMonths(paid);renderRentReminder();renderBeforeAfterRentStatus();renderStats();renderDashboard();renderRentInfoSurfaces();showToast('Is month ka rent pehle hi paid mark hai.');return;}
+  const existingRent=(Array.isArray(expenses)?expenses:[]).some(function(e){return e && (e.autoRent || String(e.category||'').trim().toLowerCase()==='rent') && String(e.rentMonth||((e.date||'').slice(0,7)))===key;});
+  if(!existingRent){
+    const date=isoDateLocal(now),entry={id:createUniqueRecordId('exp',expenses),category:'Rent',amount:Number(shopProfile.monthlyRent),date:date,notes:'Monthly rent · '+key,autoRent:true,rentMonth:key};
+    const ok=tryCommitExpenses(expenses.concat([entry]));if(!ok){showToast('Rent expense save nahi hua. Dobara try karein.');return;}
+  }
+  saveRentPaidMonths(paid.concat([key]));schedulePush();renderRentReminder();renderBeforeAfterRentStatus();renderStats();renderDashboard();renderRentInfoSurfaces();showToast('✓ Rent paid confirm ho gaya.');
 }
 document.getElementById('settings-rent-paid').onclick=confirmCurrentRentPaid;
 function renderBeforeAfterRentStatus(){
@@ -14182,7 +14191,7 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
   const MSG_TEMPLATES_KEY='mobileHisab_splashAdMessageTemplates_v1';
   const SCHEDULE_KEY='mobileHisab_scheduledSplashAdSettings_v1';
   const SCHEDULE_STATE_KEY='mobileHisab_scheduledSplashAdState_v1';
-  let scheduledAdTimer=null, scheduledCountdownTimer=null;
+  let scheduledAdTimer=null, scheduledCountdownTimer=null, startupAdCooldownUntil=Date.now()+readSchedule().gap*60000;
   const CLOUD_DOC='advertisements';
   const ADMIN_EMAIL='ziarealme.5604@gmail.com';
   let cloudUnsubscribe=null, cloudReady=false, applyingCloud=false, cloudWriteTimer=null;
@@ -14262,13 +14271,13 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
   function loadMessageTemplate(){const sel=$('splashAdMessageTemplateSelect'),box=$('splashAdWhatsAppMessage');if(!sel||!box)return;const list=readMessageTemplates(),value=list[Number(sel.value)]||'';if(value){box.value=value;templateStatus('Template '+(Number(sel.value)+1)+' message editor mein load ho gaya.');}else{templateStatus('Ye template abhi khali hai. Message likh kar Save karein.');}}
   function saveMessageTemplate(){const sel=$('splashAdMessageTemplateSelect'),box=$('splashAdWhatsAppMessage');if(!sel||!box)return;const list=readMessageTemplates(),index=Math.max(0,Math.min(2,Number(sel.value)||0)),value=box.value.trim();if(!value){templateStatus('Pehle message likhein, phir save karein.');return;}list[index]=value;try{localStorage.setItem(MSG_TEMPLATES_KEY,JSON.stringify(list));templateStatus('Template '+(index+1)+' successfully save ho gaya.');pushCloudPayload();}catch(e){templateStatus('Template save nahi ho saka.');}}
   function readSchedule(){try{const x=JSON.parse(localStorage.getItem(SCHEDULE_KEY)||'{}');return {gap:Math.max(30,Math.min(1440,Math.floor(Number(x.gap)||30))),duration:Math.max(5,Math.min(120,Math.floor(Number(x.duration)||5))),daily:Math.max(1,Math.min(50,Math.floor(Number(x.daily)||5))),enabled:x.enabled!==false}}catch(e){return {gap:30,duration:5,daily:5,enabled:true}}}
-  function saveSchedule(){const gap=Math.max(30,Math.min(1440,Math.floor(Number($('splashAdRepeatGapMinutes').value)||30))),duration=Math.max(5,Math.min(120,Math.floor(Number($('splashAdRepeatDurationSeconds').value)||5))),daily=Math.max(1,Math.min(50,Math.floor(Number($('splashAdDailyLimit').value)||5)));$('splashAdRepeatGapMinutes').value=gap;$('splashAdRepeatDurationSeconds').value=duration;$('splashAdDailyLimit').value=daily;const cfg={gap,duration,daily,enabled:$('splashAdsMasterEnabled')?$('splashAdsMasterEnabled').checked:true};try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(cfg));}catch(e){}pushCloudPayload();const st=$('splashAdScheduleStatus');if(st)st.textContent='Settings save ho gayi: har '+gap+' minutes baad, '+duration+' seconds ke liye, rozana maximum '+daily+' ads.';startScheduledAdScheduler();}
+  function saveSchedule(){const gap=Math.max(30,Math.min(1440,Math.floor(Number($('splashAdRepeatGapMinutes').value)||30))),duration=Math.max(5,Math.min(120,Math.floor(Number($('splashAdRepeatDurationSeconds').value)||5))),daily=Math.max(1,Math.min(50,Math.floor(Number($('splashAdDailyLimit').value)||5)));$('splashAdRepeatGapMinutes').value=gap;$('splashAdRepeatDurationSeconds').value=duration;$('splashAdDailyLimit').value=daily;const cfg={gap,duration,daily,enabled:$('splashAdsMasterEnabled')?$('splashAdsMasterEnabled').checked:true};startupAdCooldownUntil=Math.max(startupAdCooldownUntil,Date.now()+gap*60000);try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(cfg));}catch(e){}pushCloudPayload();const st=$('splashAdScheduleStatus');if(st)st.textContent='Settings save ho gayi: har '+gap+' minutes baad, '+duration+' seconds ke liye, rozana maximum '+daily+' ads.';startScheduledAdScheduler();}
   function getScheduleState(){try{const s=JSON.parse(localStorage.getItem(SCHEDULE_STATE_KEY)||'{}'),day=today();return s.day===day?s:{day,count:0,last:0};}catch(e){return {day:today(),count:0,last:0};}}
   function setScheduleState(s){try{localStorage.setItem(SCHEDULE_STATE_KEY,JSON.stringify(s));}catch(e){}}
   function closeScheduledAd(){const ov=$('mhScheduledAdOverlay');if(ov)ov.classList.remove('open');clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;}
   function getEnabledAds(){return readSchedule().enabled?ads.filter(x=>x.enabled&&x.image&&(!x.expiry||x.expiry>=today())):[];}
   function nextRotatingAd(state){const list=getEnabledAds();if(!list.length)return null;const lastIndex=list.findIndex(x=>x.id===state.lastAdId);return list[(lastIndex+1+list.length)%list.length];}
-  function showScheduledAd(){if(document.visibilityState!=='visible'||!navigator.onLine)return;const cfg=readSchedule();if(!cfg.enabled)return;if($('mobileCloudStartupGate')?.classList.contains('active'))return;if($('mhReplayAdOverlay')?.classList.contains('open'))return;if($('mhScheduledAdOverlay')?.classList.contains('open'))return;if(document.querySelector('.overlay.show,.modal.show'))return;const state=getScheduleState();if(state.count>=cfg.daily)return;const now=Date.now();if(!state.last){state.last=now;setScheduleState(state);return;}if(now-state.last<cfg.gap*60000)return;const ad=nextRotatingAd(state);if(!ad)return;state.last=now;state.lastAdId=ad.id;state.count++;setScheduleState(state);splashRender();const ov=$('mhScheduledAdOverlay'),close=$('mhScheduledAdClose'),count=$('mhScheduledAdCountdown'),card=$('mhScheduledAdCard');if(!ov||!close||!count||!card)return;renderAdInto(card,ad);ov.classList.add('open');close.disabled=true;let left=cfg.duration;count.textContent=String(left);close.textContent='Close ('+left+')';clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=setInterval(()=>{left--;count.textContent=String(Math.max(0,left));close.textContent=left>0?'Close ('+left+')':'Close';if(left<=0){clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;close.disabled=false;}},1000);}
+  function showScheduledAd(){if(document.visibilityState!=='visible'||!navigator.onLine)return;const cfg=readSchedule();if(!cfg.enabled)return;if(Date.now()<startupAdCooldownUntil)return;if($('mobileCloudStartupGate')?.classList.contains('active'))return;if($('mhReplayAdOverlay')?.classList.contains('open'))return;if($('mhScheduledAdOverlay')?.classList.contains('open'))return;if(document.querySelector('.overlay.show,.modal.show'))return;const state=getScheduleState();if(state.count>=cfg.daily)return;const now=Date.now();if(!state.last){state.last=now;setScheduleState(state);return;}if(now-state.last<cfg.gap*60000)return;const ad=nextRotatingAd(state);if(!ad)return;state.last=now;state.lastAdId=ad.id;state.count++;setScheduleState(state);splashRender();const ov=$('mhScheduledAdOverlay'),close=$('mhScheduledAdClose'),count=$('mhScheduledAdCountdown'),card=$('mhScheduledAdCard');if(!ov||!close||!count||!card)return;renderAdInto(card,ad);ov.classList.add('open');close.disabled=true;let left=cfg.duration;count.textContent=String(left);close.textContent='Close ('+left+')';clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=setInterval(()=>{left--;count.textContent=String(Math.max(0,left));close.textContent=left>0?'Close ('+left+')':'Close';if(left<=0){clearInterval(scheduledCountdownTimer);scheduledCountdownTimer=null;close.disabled=false;}},1000);}
   function startScheduledAdScheduler(){if(scheduledAdTimer)clearInterval(scheduledAdTimer);scheduledAdTimer=setInterval(showScheduledAd,15000);}
   function initScheduledAds(){const cfg=readSchedule();const initialState=getScheduleState();if(!initialState.last){initialState.last=Date.now();setScheduleState(initialState);}if($('splashAdsMasterEnabled'))$('splashAdsMasterEnabled').checked=cfg.enabled;[['splashAdRepeatGapMinutes',cfg.gap],['splashAdRepeatDurationSeconds',cfg.duration],['splashAdDailyLimit',cfg.daily]].forEach(([id,val])=>{const el=$(id);if(el)el.value=String(val);});['splashAdRepeatGapMinutes','splashAdRepeatDurationSeconds','splashAdDailyLimit'].forEach(id=>{const el=$(id);if(el){el.addEventListener('change',saveSchedule);el.addEventListener('input',()=>{const st=$('splashAdScheduleStatus');if(st)st.textContent='Changes save karne ke liye field se bahar click karein.';});}});const close=$('mhScheduledAdClose');if(close)close.onclick=closeScheduledAd;document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')showScheduledAd();});startScheduledAdScheduler();const st=$('splashAdScheduleStatus');if(st)st.textContent='Current: har '+cfg.gap+' minutes, '+cfg.duration+' seconds, rozana maximum '+cfg.daily+' ads.';}
 
@@ -14301,7 +14310,18 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   const splash=$('sessionSplash');if(splash&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>{if(splash.classList.contains('show'))splashRender();}).observe(splash,{attributes:true,attributeFilter:['class']});}
-  const startupGate=$('mobileCloudStartupGate');if(startupGate&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>{if(startupGate.classList.contains('active'))splashRender();}).observe(startupGate,{attributes:true,attributeFilter:['class']});}
+  const startupGate=$('mobileCloudStartupGate');if(startupGate&&typeof MutationObserver!=='undefined'){
+    let wasActive=startupGate.classList.contains('active');
+    new MutationObserver(()=>{
+      const active=startupGate.classList.contains('active');
+      if(active){splashRender();}
+      if(wasActive&&!active){
+        const cfg=readSchedule();startupAdCooldownUntil=Date.now()+cfg.gap*60000;
+        const state=getScheduleState();state.last=Date.now();setScheduleState(state);
+      }
+      wasActive=active;
+    }).observe(startupGate,{attributes:true,attributeFilter:['class']});
+  }
 })();
 </script>
 </body>
