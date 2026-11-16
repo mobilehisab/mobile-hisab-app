@@ -1178,10 +1178,10 @@ body.menu-open .app>header{z-index:1!important;}
 .analytics-period.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12);}
 .analytics-period-note{font-size:10.5px;color:var(--text-dim);margin-top:8px;text-align:center;line-height:1.5;}
 .analytics-snapshot-card{margin-bottom:10px;}.analytics-snapshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}.analytics-snapshot-item{background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:9px;min-width:0;}.analytics-snapshot-value{font-size:17px;font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.analytics-snapshot-label{font-size:9.5px;color:var(--text-dim);margin-top:3px;line-height:1.25;}.analytics-snapshot-dead{margin-top:9px;border:1px solid var(--border);border-radius:11px;padding:9px;background:var(--surface-2);}.analytics-snapshot-dead-title{font-size:11px;font-weight:900;display:flex;justify-content:space-between;gap:8px;}.analytics-snapshot-dead-title span{font-size:9.5px;color:var(--text-dim);font-weight:600;}.analytics-snapshot-dead-list{margin-top:7px;display:grid;gap:5px;}.analytics-snapshot-dead-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:7px;align-items:center;font-size:10px;border-top:1px solid var(--border);padding-top:6px;}.analytics-snapshot-dead-row div{min-width:0;}.analytics-snapshot-dead-row b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.analytics-snapshot-dead-row small{display:block;color:var(--text-faint);margin-top:2px;}
-.analytics-scoreboard{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}.analytics-scoreboard .analytics-score:nth-child(1){grid-column:1 / -1;}.analytics-scoreboard .analytics-score:nth-child(6){grid-column:1 / -1;}
+.analytics-scoreboard{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}.analytics-scoreboard .analytics-score:nth-child(1),.analytics-scoreboard .analytics-score:nth-child(2){grid-column:1 / -1;}.analytics-scoreboard .analytics-score:nth-child(6){grid-column:1 / -1;}
 .analytics-score{background:linear-gradient(145deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:13px;padding:10px;position:relative;overflow:hidden;min-width:0;}
 .analytics-score:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--border-strong);}
-.analytics-score.profit-score{border-width:2px;} .analytics-score.profit-score .analytics-score-value{font-size:27px;} .analytics-score.profit-score .analytics-score-label{font-size:11px;}
+.analytics-score.profit-score,.analytics-score.mobile-average-score{border-width:2px;} .analytics-score.profit-score .analytics-score-value,.analytics-score.mobile-average-score .analytics-score-value{font-size:27px;} .analytics-score.profit-score .analytics-score-label{font-size:11px;}
 .analytics-score-label{font-size:10px;color:var(--text-dim);font-weight:900;text-transform:uppercase;letter-spacing:.3px;}
 .analytics-score-value{font-size:22px;font-weight:900;line-height:1.15;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.analytics-score-sub{font-size:10px;color:var(--text-faint);margin-top:3px;}
 .analytics-change{margin-top:6px;font-size:10px;font-weight:900;line-height:1.35;}.analytics-up{color:var(--pta);}.analytics-down{color:var(--danger);}.analytics-flat{color:var(--text-dim);}
@@ -9547,21 +9547,27 @@ function analyticsDifferenceHtml(curr,prev,key){
   return '<span class="analytics-diff">'+sign+(key==='soldUnits'||key==='purchasedUnits'?Math.abs(Math.round(diff)):'Rs '+fmt(Math.abs(diff)))+(key==='profit'?' vs previous net profit':' vs previous')+'</span>';
 }
 function analyticsRenderScoreboard(curr,prev){
-  const cards=[['Net Profit',curr.netProfit,prev&&prev.netProfit,'profit','Net profit <span data-rent-profit-status class="rent-status-badge '+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'is-unpaid':'is-paid')+'">'+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'Rent Unpaid':'Rent Paid')+'</span>'],['Mobiles sold',curr.soldUnits,prev&&prev.soldUnits,'soldUnits','Units sold'],['Mobiles purchased',curr.purchasedUnits,prev&&prev.purchasedUnits,'purchasedUnits','Units purchased'],['Sale',curr.saleAmount,prev&&prev.saleAmount,'sales','Sales volume'],['Purchase',curr.purchaseAmount,prev&&prev.purchaseAmount,'purchases','Investment in phones'],['Expenses',curr.expenses,prev&&prev.expenses,'expenses','Total business expenses']];
+  const cards=[['Net Profit',curr.netProfit,prev&&prev.netProfit,'profit','Net profit'],['Mobiles sold',curr.soldUnits,prev&&prev.soldUnits,'soldUnits','Units sold'],['Mobiles purchased',curr.purchasedUnits,prev&&prev.purchasedUnits,'purchasedUnits','Units purchased'],['Sale',curr.saleAmount,prev&&prev.saleAmount,'sales','Sales volume'],['Purchase',curr.purchaseAmount,prev&&prev.purchaseAmount,'purchases','Investment in phones'],['Expenses',curr.expenses,prev&&prev.expenses,'expenses','Total business expenses']];
   document.getElementById('analyticsScoreboard').innerHTML=cards.map(function(c){
-    const pv=c[2]==null?null:c[2], avg=c[3]==='profit'?(curr.soldUnits?curr.grossProfit/curr.soldUnits:0):null, avgPrev=c[3]==='profit'&&prev?(prev.soldUnits?prev.grossProfit/prev.soldUnits:0):null;
-    const sub=c[3]==='profit'?'Mobile average (phone purchase + its own expenses only): Rs '+fmt(avg):(c[3]==='purchases'&&curr.purchasedUnits===0?'No purchases recorded':(c[3]==='sales'&&curr.soldUnits===0?'No sales recorded':c[4]));
+    const pv=c[2]==null?null:c[2];
     const comparison=pv==null?'<span class="analytics-flat">No previous period</span>':analyticsChangeHtml(c[1],pv,c[3])+' '+analyticsDifferenceHtml(c[1],pv,c[3]);
-    let avgLine='';
     if(c[3]==='profit'){
-      avgLine='<div class="analytics-diff">Average mobile profit comparison</div>';
-      if(pv!=null){
+      const avg=curr.soldUnits?curr.grossProfit/curr.soldUnits:0;
+      const avgPrev=prev&&prev.soldUnits?prev.grossProfit/prev.soldUnits:0;
+      let avgComparison='<span class="analytics-flat">No previous average mobile profit</span>';
+      let previousAverage='';
+      if(prev&&prev.soldUnits){
         const avgDiff=avg-avgPrev, avgSign=avgDiff>0?'+':'−';
         const avgDelta=avgDiff===0?'<span class="analytics-diff">No change vs previous average mobile profit</span>':'<span class="analytics-diff">'+avgSign+'Rs '+fmt(Math.abs(avgDiff))+' vs previous average mobile profit</span>';
-        avgLine+='<div class="analytics-change">'+analyticsChangeHtml(avg,avgPrev,'profit')+' '+avgDelta+'</div><span class="analytics-diff">Previous average mobile profit: Rs '+fmt(avgPrev)+'</span>';
-      }else{avgLine+='<span class="analytics-diff">No previous average mobile profit</span>';}
+        avgComparison=analyticsChangeHtml(avg,avgPrev,'profit')+' '+avgDelta;
+        previousAverage='<div class="analytics-score-sub">Previous average mobile profit: Rs '+fmt(avgPrev)+'</div>';
+      }
+      const netLabel='Net Profit <span data-rent-profit-status class="rent-status-badge '+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'is-unpaid':'is-paid')+'">'+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'Rent Unpaid':'Rent Paid')+'</span>';
+      return '<div class="analytics-score profit-score"><div class="analytics-score-label">'+netLabel+'</div><div class="analytics-score-value">'+analyticsValueLabel(c[1],c[3])+'</div><div class="analytics-change">'+comparison+'</div></div>'+
+        '<div class="analytics-score mobile-average-score"><div class="analytics-score-label">Average mobile profit</div><div class="analytics-score-value">Rs '+fmt(avg)+'</div><div class="analytics-change">'+avgComparison+'</div>'+previousAverage+'</div>';
     }
-    return '<div class="analytics-score '+(c[3]==='profit'?'profit-score':'')+'"><div class="analytics-score-label">'+c[0]+'</div><div class="analytics-score-value">'+analyticsValueLabel(c[1],c[3])+'</div><div class="analytics-score-sub">'+sub+'</div><div class="analytics-change">'+comparison+avgLine+'</div></div>';
+    const sub=c[3]==='purchases'&&curr.purchasedUnits===0?'No purchases recorded':(c[3]==='sales'&&curr.soldUnits===0?'No sales recorded':c[4]);
+    return '<div class="analytics-score"><div class="analytics-score-label">'+c[0]+'</div><div class="analytics-score-value">'+analyticsValueLabel(c[1],c[3])+'</div><div class="analytics-score-sub">'+sub+'</div><div class="analytics-change">'+comparison+'</div></div>';
   }).join('');
 }
 function analyticsSeriesForRange(range,key,points){
