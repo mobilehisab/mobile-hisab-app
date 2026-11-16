@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <!--
+- Index v199 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
 Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotation - 16 Nov 2026 • 09:00 AM PKT
 - Index v174 — Manual Splash Ads Manager — 14 Nov 2026 • 07:57 AM PKT. Added a Settings manager for multiple manual image ads with optional heading, description, contact, advertiser, fee/payment status and expiry. The selected enabled ad appears as a clearly marked Sponsored card on the session loading screen. Ads are device-local; no Firestore schema/rules or cloud publishing changed.
@@ -9717,7 +9718,11 @@ document.querySelectorAll('[data-busiest-period]').forEach(function(btn){btn.add
 function analyticsRenderAverages(range,curr,prev){
   const actual=range.mode==='lifetime'?analyticsRangeForLifetime():range;
   const days=actual.from&&actual.to?Math.max(1,analyticsDaysBetween(actual.from,actual.to)+1):1;
-  const prevDays=prev&&prev.from&&prev.to?Math.max(1,analyticsDaysBetween(prev.from,prev.to)+1):0;
+  // `prev` is the previous-period metrics object, not the date-range object.
+  // Read the comparable dates from range.previous so all daily-average cards
+  // receive a valid previous-period denominator.
+  const prevRange=range.previous||null;
+  const prevDays=prevRange&&prevRange.from&&prevRange.to?Math.max(1,analyticsDaysBetween(prevRange.from,prevRange.to)+1):0;
   const cards=[
     ['Mobiles sold / day',curr.soldUnits/days,prev&&prevDays?prev.soldUnits/prevDays:null,'units','soldUnits'],
     ['Mobiles purchased / day',curr.purchasedUnits/days,prev&&prevDays?prev.purchasedUnits/prevDays:null,'units','purchasedUnits'],
