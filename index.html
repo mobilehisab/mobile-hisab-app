@@ -217,7 +217,7 @@ window.__MHE.legacy({"u":{"Apne Mobile Hisab اکاؤنٹ mein login karein. Aap
   .card-actions button.sell-btn{color:var(--sale);border-color:var(--sale);}
   .card-actions button.del-btn{color:var(--danger);}
 
-  .fab{position:fixed;bottom:calc(46px + env(safe-area-inset-bottom, 0px));right:50%;transform:translateX(230px);width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-text);border:none;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.4);z-index:20;}
+  .fab{position:fixed;bottom:calc(46px + env(safe-area-inset-bottom, 0px));right:50%;transform:translateX(230px);width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-text);border:none;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.4);z-index:60;}
   @media (max-width:520px){ .fab{transform:none;right:20px;} }
 
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:flex-end;justify-content:center;}
@@ -7237,6 +7237,18 @@ function applyEntryLayoutToDOM(platform){
     if(key && !groups[key]) groups[key]=g;
   });
 
+  // Keep platform-specific and currently hidden groups inside the entry sheet.
+  // A group must never be left detached: the next platform switch needs to be
+  // able to find it again (for example RAM on iPhone, or Battery on Android).
+  let parking=document.getElementById('entryLayoutParking');
+  if(!parking){
+    parking=document.createElement('div');
+    parking.id='entryLayoutParking';
+    parking.setAttribute('aria-hidden','true');
+    parking.style.display='none';
+    sheet.appendChild(parking);
+  }
+
   // First detach all configurable groups from their current parent.
   // We only detach groups that are actually known to the layout system.
   Object.keys(groups).forEach(function(key){
@@ -7332,6 +7344,18 @@ function applyEntryLayoutToDOM(platform){
     if(!g) return;
     g.style.display='none';
     g.classList.add('is-hidden');
+    parking.appendChild(g);
+  });
+
+  // Preserve every group not used by this platform's Main/More layout.
+  // These are intentionally unavailable on the current platform, but remain
+  // discoverable for the next brand/platform change instead of being lost.
+  Object.keys(groups).forEach(function(key){
+    const g=groups[key];
+    if(!g || g.parentNode===mainWrap || g.parentNode===more || g.parentNode===parking) return;
+    g.style.display='none';
+    g.classList.remove('is-hidden');
+    parking.appendChild(g);
   });
 }
 
