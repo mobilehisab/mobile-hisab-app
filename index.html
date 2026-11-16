@@ -3990,7 +3990,7 @@ function setPlatformDefault(platform, fieldKey, value){
 function applyPlatformDefaultsToForm(platform){
   const defs={status:'',ram:'',storage:'',condition:'',network:'',display:'Original panel',touch:'Perfect',camera:'Perfect',body:'Original',openrepair:'No open, no repair',battery:platform==='iphone'?'':'Perfect',box:'',packing:'No pack',charger:'',faceid:platform==='iphone'?'Yes':'No',truetone:platform==='iphone'?'Yes':'No'};
   Object.keys(defs).forEach(function(k){
-    const d=(k==='status' || (platform==='iphone' && (k==='battery' || k==='box' || k==='charger'))) ? '' : getPlatformDefault(platform,k,defs[k]);
+    const d=(k==='status' || k==='box' || k==='charger' || (platform==='iphone' && k==='battery')) ? '' : getPlatformDefault(platform,k,defs[k]);
     const opts=getEntryFieldOptionsForPlatform(platform,k);
     formState[k]=(d && opts.indexOf(d)!==-1) ? d : '';
   });
