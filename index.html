@@ -6,7 +6,7 @@ Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotatio
 
 - Index v121 — Bilingual English / Urdu Language Selector — 06 Nov 2026 • 11:06 AM PKT. Added a persistent English/Urdu selector in the header and CSV-driven Urdu text translations. English remains the default. Existing app workflows, Firebase/Firestore integration, data schema, calculations and business logic are retained.
 - Index v120 — Analytics Open Fix — 05 Nov 2026 • 09:30 AM PKT. Fixed ReferenceError in grouped busiest-hours renderer that prevented Analytics overlay from opening when records with timestamps existed; open overlay before rendering and surface safe error fallback.
-- Index v189 — Completed-Month Averages with Current-Month Data — 16 Nov 2026 • Monthly sales, purchases and profit begin from account creation; current partial month remains visible in chart/table, while monthly averages use completed months only. Rolling latest 12 months after the first year.
+- Index v190 — Mobile Profit Average Excludes General Expenses — 16 Nov 2026 • Average profit per mobile uses sale profit after that phone's own total cost/phone expenses only; general business expenses are excluded from per-mobile averages. Monthly net profit remains unchanged; completed-month averaging and current-month display are preserved.
 - Index v119 — Analytics 28-Day Comparison, Grouped Business Hours & Rent Emphasis — 05 Nov 2026 • 09:09 AM PKT. Default analytics period is last 28 days compared with the immediately preceding 28 days; busiest hours default to 3-hour grouped blocks with hourly detail selectable; unpaid rent estimate is visually emphasized.
 - Index v118 — Cloud-Synced Recycle Bin & Version Display Fix — 04 Nov 2026 • 11:26:00 AM PKT. Added shop-scoped cloud synchronization for deleted inventory records and restore state so Recycle Bin is shared across devices, including offline changes reconciled on reconnect. Corrected menu footer and About version metadata to v118. Existing inventory schema, Firebase/Firestore connection, calculations and UI are preserved.
 - Index v116 — Persistent IndexedDB Undo/Redo — 03 Nov 2026 • 09:36:00 PM PKT. Added shop-scoped IndexedDB storage for header Undo/Redo stacks.
@@ -9543,7 +9543,7 @@ function analyticsDifferenceHtml(curr,prev,key){
 function analyticsRenderScoreboard(curr,prev){
   const cards=[['Profit',curr.netProfit,prev&&prev.netProfit,'profit','Net profit <span data-rent-profit-status class="rent-status-badge '+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'is-unpaid':'is-paid')+'">'+(shopProfile.rentType==='rented'&&!isRentPaidForMonth(rentMonthKey(new Date()))?'Rent Unpaid':'Rent Paid')+'</span>'],['Mobiles sold',curr.soldUnits,prev&&prev.soldUnits,'soldUnits','Units sold'],['Mobiles purchased',curr.purchasedUnits,prev&&prev.purchasedUnits,'purchasedUnits','Units purchased'],['Sale',curr.saleAmount,prev&&prev.saleAmount,'sales','Sales volume'],['Purchase',curr.purchaseAmount,prev&&prev.purchaseAmount,'purchases','Investment in phones'],['Expenses',curr.expenses,prev&&prev.expenses,'expenses','Total business expenses']];
   document.getElementById('analyticsScoreboard').innerHTML=cards.map(function(c){
-    const pv=c[2]==null?null:c[2], avg=c[3]==='profit'?(curr.soldUnits?curr.netProfit/curr.soldUnits:0):null, avgPrev=c[3]==='profit'&&prev?(prev.soldUnits?prev.netProfit/prev.soldUnits:0):null;
+    const pv=c[2]==null?null:c[2], avg=c[3]==='profit'?(curr.soldUnits?curr.grossProfit/curr.soldUnits:0):null, avgPrev=c[3]==='profit'&&prev?(prev.soldUnits?prev.grossProfit/prev.soldUnits:0):null;
     const sub=c[3]==='profit'?'Avg profit / mobile: Rs '+fmt(avg):(c[3]==='purchases'&&curr.purchasedUnits===0?'No purchases recorded':(c[3]==='sales'&&curr.soldUnits===0?'No sales recorded':c[4]));
     const comparison=pv==null?'<span class="analytics-flat">No previous period</span>':analyticsChangeHtml(c[1],pv,c[3])+' '+analyticsDifferenceHtml(c[1],pv,c[3]);
     const avgLine=c[3]==='profit'&&pv!=null?'<span class="analytics-diff">Previous avg/mobile: Rs '+fmt(avgPrev)+'</span>':'';
@@ -9704,7 +9704,7 @@ function analyticsRenderAverages(range,curr,prev){
     ['Profit / day',curr.netProfit/days,prev&&prevDays?prev.netProfit/prevDays:null,'money','profit'],
     ['Sales amount / day',curr.saleAmount/days,prev&&prevDays?prev.saleAmount/prevDays:null,'money','sales'],
     ['Purchase amount / day',curr.purchaseAmount/days,prev&&prevDays?prev.purchaseAmount/prevDays:null,'money','purchases'],
-    ['Profit / mobile',curr.soldUnits?curr.netProfit/curr.soldUnits:0,prev&&prev.soldUnits?prev.netProfit/prev.soldUnits:(prev?0:null),'money','profit']
+    ['Profit / mobile',curr.soldUnits?curr.grossProfit/curr.soldUnits:0,prev&&prev.soldUnits?prev.grossProfit/prev.soldUnits:(prev?0:null),'money','profit']
   ];
   const fmtValue=function(v,type){return type==='units'?Number(v||0).toLocaleString('en-PK',{maximumFractionDigits:2}):'Rs '+fmt(v||0);};
   document.getElementById('analyticsAverageGrid').innerHTML=cards.map(function(c){
@@ -9818,21 +9818,21 @@ function analyticsRenderMonthlyPerformance(){
     const rangeStart=(d.getFullYear()===firstMonth.getFullYear()&&d.getMonth()===firstMonth.getMonth())?isoDateLocal(accountCreated):isoDateLocal(d);
     const rangeEnd=(d.getFullYear()===currentMonth.getFullYear()&&d.getMonth()===currentMonth.getMonth())?isoDateLocal(now):isoDateLocal(monthEnd);
     const m=analyticsMetrics({from:rangeStart,to:rangeEnd,mode:'calendar'});
-    rows.push({label:d.toLocaleDateString('en-PK',{month:'short',year:'2-digit'}),sold:m.soldUnits,purchased:m.purchasedUnits,profit:m.netProfit,avgMobile:m.soldUnits?m.netProfit/m.soldUnits:0,from:rangeStart,to:rangeEnd});
+    rows.push({label:d.toLocaleDateString('en-PK',{month:'short',year:'2-digit'}),sold:m.soldUnits,purchased:m.purchasedUnits,profit:m.netProfit,mobileProfit:m.grossProfit,avgMobile:m.soldUnits?m.grossProfit/m.soldUnits:0,from:rangeStart,to:rangeEnd});
   }
   const n=rows.length;
   // Keep the current/incomplete month visible in the chart and table, but
   // exclude it from monthly averages until the calendar month has ended.
   const completedRows=rows.filter(function(r){return r.to<isoDateLocal(new Date(now.getFullYear(),now.getMonth()+1,0));});
-  const completedTotals=completedRows.reduce(function(a,r){a.sold+=r.sold;a.purchased+=r.purchased;a.profit+=r.profit;return a;},{sold:0,purchased:0,profit:0});
+  const completedTotals=completedRows.reduce(function(a,r){a.sold+=r.sold;a.purchased+=r.purchased;a.profit+=r.profit;a.mobileProfit+=r.mobileProfit;return a;},{sold:0,purchased:0,profit:0,mobileProfit:0});
   const completedMonthCount=completedRows.length;
   const avgProfitPerMonth=completedMonthCount?completedTotals.profit/completedMonthCount:0;
   const avgSold=completedMonthCount?completedTotals.sold/completedMonthCount:0;
   const avgPurchased=completedMonthCount?completedTotals.purchased/completedMonthCount:0;
-  const avgProfitPerMobile=completedTotals.sold?completedTotals.profit/completedTotals.sold:0;
+  const avgProfitPerMobile=completedTotals.sold?completedTotals.mobileProfit/completedTotals.sold:0;
   const avgBox=document.getElementById('analyticsMonthlyAverages');
   if(avgBox)avgBox.innerHTML=[
-    ['Avg sold / completed month',avgSold.toFixed(1)],['Avg purchased / completed month',avgPurchased.toFixed(1)],['Avg net profit / completed month','Rs '+fmt(avgProfitPerMonth)],['Avg profit / mobile (completed months)','Rs '+fmt(avgProfitPerMobile)]
+    ['Avg sold / completed month',avgSold.toFixed(1)],['Avg purchased / completed month',avgPurchased.toFixed(1)],['Avg net profit / completed month','Rs '+fmt(avgProfitPerMonth)],['Avg mobile profit (phone cost only · completed months)','Rs '+fmt(avgProfitPerMobile)]
   ].map(function(x){return '<div class="analytics-snapshot-item"><div class="analytics-snapshot-value">'+x[1]+'</div><div class="analytics-snapshot-label">'+x[0]+'</div></div>';}).join('');
   const maxUnits=Math.max(1,...rows.map(function(r){return Math.max(r.sold,r.purchased);}));
   const maxAbsProfit=Math.max(1,...rows.map(function(r){return Math.abs(r.profit);}));
