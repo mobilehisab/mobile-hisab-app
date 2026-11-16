@@ -5623,9 +5623,13 @@ function renderStats(){
   const profitCard=document.querySelector('#stats .stat:nth-child(5)');
   if(profitCard){
     profitCard.classList.toggle('rent-profit-stat',shopProfile.rentType==='rented');
-    if(shopProfile.rentType==='rented'){
-      const paid=isRentPaidForMonth(rentMonthKey(new Date()));
-      const rentBadgeHtml='<small data-rent-corner-badge class="rent-corner-badge '+(paid?'is-paid':'is-unpaid')+'">'+(paid?'Rent Paid':'Rent Unpaid')+'</small>';const profitLabel=profitCard.querySelector('.l');if(profitLabel)profitLabel.insertAdjacentHTML('afterend',rentBadgeHtml);else profitCard.insertAdjacentHTML('beforeend',rentBadgeHtml);
+    // Main dashboard only shows a rent marker while payment is still pending.
+    // Once paid, keep the profit card clean: no 'Rent Paid' label or badge.
+    if(shopProfile.rentType==='rented' && !isRentPaidForMonth(rentMonthKey(new Date()))){
+      const rentBadgeHtml='<small data-rent-corner-badge class="rent-corner-badge is-unpaid">Rent Unpaid</small>';
+      const profitLabel=profitCard.querySelector('.l');
+      if(profitLabel)profitLabel.insertAdjacentHTML('afterend',rentBadgeHtml);
+      else profitCard.insertAdjacentHTML('beforeend',rentBadgeHtml);
     }
   }
   document.querySelectorAll('[data-stats-period]').forEach(function(btn){
