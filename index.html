@@ -10127,7 +10127,23 @@ function renderAnalytics(){
     if(analyticsCustomFrom) document.getElementById('analyticsFrom').value=analyticsCustomFrom;
     if(analyticsCustomTo) document.getElementById('analyticsTo').value=analyticsCustomTo;
   }
-  const range=analyticsDateRange(analyticsMode), prev=range.previous||null;
+  const range=analyticsDateRange(analyticsMode);
+  // Lifetime is also compared against an immediately preceding period of the
+  // same length as the account's recorded activity window. This keeps daily
+  // averages comparable instead of disabling the comparison for Lifetime.
+  if(range.mode==='lifetime' && !range.previous){
+    const lifetimeActual=analyticsRangeForLifetime();
+    if(lifetimeActual && lifetimeActual.from && lifetimeActual.to){
+      const span=Math.max(1,analyticsDaysBetween(lifetimeActual.from,lifetimeActual.to)+1);
+      const prevEndDate=new Date(lifetimeActual.from+'T00:00:00');
+      prevEndDate.setDate(prevEndDate.getDate()-1);
+      const prevStartDate=new Date(prevEndDate);
+      prevStartDate.setDate(prevStartDate.getDate()-(span-1));
+      const pf=isoDateLocal(prevStartDate), pt=isoDateLocal(prevEndDate);
+      range.previous={from:pf,to:pt,label:analyticsLabelDate(pf,true)+' – '+analyticsLabelDate(pt,true)};
+    }
+  }
+  const prev=range.previous||null;
   const curr=analyticsMetrics(range), previous=prev?analyticsMetrics(prev):null;
   document.querySelectorAll('[data-analytics-period]').forEach(function(b){b.classList.toggle('active',b.dataset.analyticsPeriod===analyticsMode);});
   document.querySelectorAll('[data-analytics-dashboard-period]').forEach(function(b){b.classList.toggle('active',b.dataset.analyticsDashboardPeriod===analyticsMode);});
