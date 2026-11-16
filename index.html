@@ -2737,10 +2737,10 @@ body.mh-urdu-mode .date-time-field.is-unknown .date-time-control-row::before { c
     <div class="sheet-head"><h3>📊 Analytics</h3><button class="icon-btn" id="btnAnalyticsClose">×</button></div>
     <div class="analytics-period-bar">
       <div class="analytics-period-title">Performance period</div>
-      <div class="chip-row analytics-dashboard-periods" id="analyticsDashboardPeriods">
-        <button type="button" class="chip" data-analytics-dashboard-period="calendar">This month</button>
-        <button type="button" class="chip" data-analytics-dashboard-period="business">Business month</button>
-        <button type="button" class="chip" data-analytics-dashboard-period="lifetime">Lifetime</button>
+      <div class="stats-period-options analytics-dashboard-periods" id="analyticsDashboardPeriods">
+        <button type="button" class="stats-period-btn" data-analytics-dashboard-period="calendar">This month</button>
+        <button type="button" class="stats-period-btn" data-analytics-dashboard-period="business">Business month</button>
+        <button type="button" class="stats-period-btn" data-analytics-dashboard-period="lifetime">Lifetime</button>
       </div>
       <div class="analytics-extra-periods" id="analyticsPeriods">
         <button type="button" class="analytics-period" data-analytics-period="28days">Last 28 days</button>
@@ -10103,8 +10103,10 @@ document.querySelectorAll('[data-timeline-mode]').forEach(function(btn){btn.addE
 })();
 
 function renderAnalytics(){
-  const calendarPeriodButton=document.querySelector('[data-analytics-period="calendar"]');
+  const calendarPeriodButton=document.querySelector('[data-analytics-dashboard-period="calendar"]');
+  const lifetimePeriodButton=document.querySelector('[data-analytics-dashboard-period="lifetime"]');
   if(calendarPeriodButton) calendarPeriodButton.textContent=currentMonthDisplayName();
+  if(lifetimePeriodButton) lifetimePeriodButton.textContent=document.body.classList.contains('mh-urdu-mode')?'لائف ٹائم':'Lifetime';
   const custom=document.getElementById('analyticsCustomRange');
   if(analyticsMode==='custom') custom.classList.remove('hidden'); else custom.classList.add('hidden');
   if(analyticsMode==='custom'){
