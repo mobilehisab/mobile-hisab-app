@@ -2,7 +2,7 @@
 <!--
 - Index v200 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
-Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotation - 16 Nov 2026 • 09:00 AM PKT
+Current file version: Index v201 - Rented Shop Default & Profile Setup Hardening - 20 Nov 2026 • 10:00 AM PKT
 - Index v174 — Manual Splash Ads Manager — 14 Nov 2026 • 07:57 AM PKT. Added a Settings manager for multiple manual image ads with optional heading, description, contact, advertiser, fee/payment status and expiry. The selected enabled ad appears as a clearly marked Sponsored card on the session loading screen. Ads are device-local; no Firestore schema/rules or cloud publishing changed.
 
 - Index v121 — Bilingual English / Urdu Language Selector — 06 Nov 2026 • 11:06 AM PKT. Added a persistent English/Urdu selector in the header and CSV-driven Urdu text translations. English remains the default. Existing app workflows, Firebase/Firestore integration, data schema, calculations and business logic are retained.
@@ -17,7 +17,7 @@ Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotatio
 Version name: Demo Analytics Data Alignment
 Baseline: User-provided Index v93 file (preserved; all existing functionality retained)
 Last changed: 13 Nov 2026 • 11:23 PM PKT (Asia/Karachi)
-Change summary: Demo timeline now reflects only elapsed days in November: no future-dated sales, purchases or expenses; every sold mobile is purchased on or before its sale date; additional 1–5 daily sales are generated on each fresh Demo launch as November days pass. Existing original buy prices, Rs. 500 sale-price increments, profit bands, 20 available stock units, Rs. 20,000 unpaid rent, and temporary-only demo isolation are preserved.
+Change summary: New Google shop setup explicitly defaults to rented, opens rent fields, and defaults rent due day to 1 unless the user explicitly selects owned. Firestore profile writes still require matching Firebase Security Rules. Demo timeline now reflects only elapsed days in November: no future-dated sales, purchases or expenses; every sold mobile is purchased on or before its sale date; additional 1–5 daily sales are generated on each fresh Demo launch as November days pass. Existing original buy prices, Rs. 500 sale-price increments, profit bands, 20 available stock units, Rs. 20,000 unpaid rent, and temporary-only demo isolation are preserved.
 
 INSTRUCTIONS FOR ANY AI/DEVELOPER RECEIVING THIS FILE:
 1. Read this block and the APP_INDEX_VERSION / APP_INDEX_UPDATED constants before editing.
@@ -13611,10 +13611,14 @@ function maybeOpenShopSetup(force){
   document.getElementById('setup-shopphone').value=shopProfile.shopPhone||'';
   document.getElementById('setup-shopaddress').value=shopProfile.shopAddress||'';
   document.getElementById('setup-shopcity').value=shopProfile.shopCity||'';
-  document.getElementById('setup-rent-type').value=shopProfile.rentType||'rented';
+  const rentTypeSelect=document.getElementById('setup-rent-type');
+  // New shop profiles default to rented; owned is selected only when the user explicitly chose it.
+  const setupRentType=(shopProfile.rentType==='owned')?'owned':'rented';
+  rentTypeSelect.value=setupRentType;
+  rentTypeSelect.dispatchEvent(new Event('change',{bubbles:true}));
   document.getElementById('setup-rent-amount').value=Number(shopProfile.monthlyRent)||'';
-  document.getElementById('setup-rent-day').value=Number(shopProfile.rentDueDay)||'';
-  document.getElementById('setup-rent-fields').style.display=(shopProfile.rentType||'rented')==='rented'?'block':'none';
+  document.getElementById('setup-rent-day').value=Number(shopProfile.rentDueDay)||1;
+  document.getElementById('setup-rent-fields').style.display=setupRentType==='rented'?'block':'none';
   document.getElementById('shopSetupError').style.display='none';
   ov.classList.remove('hidden');
 }
@@ -13659,7 +13663,7 @@ document.getElementById('btnCompleteShopSetup').onclick=async function(){
   const shopPhone=document.getElementById('setup-shopphone').value.trim();
   const shopAddress=document.getElementById('setup-shopaddress').value.trim();
   const shopCity=document.getElementById('setup-shopcity').value.trim();
-  const rentType=document.getElementById('setup-rent-type').value;
+  const rentType=document.getElementById('setup-rent-type').value==='owned'?'owned':'rented';
   const monthlyRent=Number(document.getElementById('setup-rent-amount').value)||0;
   const rentDueDay=Math.min(31,Math.max(1,Number(document.getElementById('setup-rent-day').value)||1));
   const err=document.getElementById('shopSetupError');
