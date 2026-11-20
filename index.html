@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-- Index v199 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
+- Index v200 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
 Current file version: Index v185 - Platform Cost, Rent Persistence & Ads Rotation - 16 Nov 2026 • 09:00 AM PKT
 - Index v174 — Manual Splash Ads Manager — 14 Nov 2026 • 07:57 AM PKT. Added a Settings manager for multiple manual image ads with optional heading, description, contact, advertiser, fee/payment status and expiry. The selected enabled ad appears as a clearly marked Sponsored card on the session loading screen. Ads are device-local; no Firestore schema/rules or cloud publishing changed.
@@ -12241,6 +12241,12 @@ function resolveUserRoleAndShop(user){
     }
     userRole='shop'; userShopId=user.uid; userAccessStatus='active'; userAccessReason='';
     const d=snap.exists ? (snap.data()||{}) : {};
+    // Restore mandatory shop-profile fields from the account document onto a
+    // fresh device before the Google profile-completion gate is evaluated.
+    if(d.shopName || d.ownerName || d.shopPhone || d.shopAddress || d.shopCity){
+      const restoredProfile=Object.assign({},shopProfile,{shopName:d.shopName||shopProfile.shopName||'',ownerName:d.ownerName||shopProfile.ownerName||'',shopPhone:d.shopPhone||shopProfile.shopPhone||'',shopAddress:d.shopAddress||shopProfile.shopAddress||'',shopCity:d.shopCity||shopProfile.shopCity||'',rentType:d.rentType||shopProfile.rentType||'rented',monthlyRent:Number(d.monthlyRent!=null?d.monthlyRent:shopProfile.monthlyRent)||0,rentDueDay:Number(d.rentDueDay!=null?d.rentDueDay:shopProfile.rentDueDay)||1});
+      try{localStorage.setItem(shopScopedStorageKeyForId(LS_SHOP_PROFILE_KEY,user.uid),JSON.stringify(restoredProfile));}catch(e){}
+    }
     const payload={role:'shop',shopId:user.uid,accessStatus:'active',accessReason:'',email:user.email||d.email||null,shopName:d.shopName||shopProfile.shopName||'',ownerName:d.ownerName||shopProfile.ownerName||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
     return fbDb.collection('users').doc(user.uid).set(payload,{merge:true});
   }).catch(function(err){
@@ -12547,9 +12553,9 @@ function initFirebaseSync(){
     fbDb = firebase.firestore();
     if(firebaseAuthEnvironmentSupported()){
       fbAuth.getRedirectResult().then(function(result){
-        if(result && result.user && result.additionalUserInfo && result.additionalUserInfo.isNewUser){
+        if(result && result.user && isGoogleUser(result.user)){
           pendingGoogleShopSetup=true;
-          setTimeout(function(){ maybeOpenShopSetup(true); }, 500);
+          setTimeout(function(){ if(!hasCompleteGoogleShopProfile()) maybeOpenShopSetup(true); }, 650);
         }
       }).catch(function(err){ console.warn('Google redirect result', err); });
     }
@@ -12601,6 +12607,15 @@ function initFirebaseSync(){
           updateAccountUI();
           globalModelLibrary={};
           globalModelLibraryLoaded={};
+          // Google accounts must complete the mandatory shop profile before
+          // the dashboard is exposed. Do not rely only on isNewUser: a Google
+          // identity may already exist in Firebase but still be new to this app.
+          if(userRole!=='admin' && isGoogleUser(user) && !hasCompleteGoogleShopProfile()){
+            pendingGoogleShopSetup=true;
+            setAuthGateView('unlocked');
+            maybeOpenShopSetup(true);
+            return;
+          }
           if(accessStatusAllowsUse()){
             setAuthGateView('unlocked');
             subscribeUserNotifications();
@@ -12833,6 +12848,16 @@ function updateAccountUI(){
   renderSettingsHomeSummaries();
 }
 
+function friendlyCloudSyncError(err,stage){
+  const code=String(err&&err.code||'').toLowerCase();
+  const msg=String(err&&err.message||'').replace(/\s+/g,' ').trim();
+  if(code.indexOf('permission-denied')!==-1) return (stage||'Cloud sync')+' ناکام: Firestore permission denied — Firebase security rules چیک کریں۔';
+  if(code.indexOf('unauthenticated')!==-1) return (stage||'Cloud sync')+' ناکام: دوبارہ Google/email login کریں۔';
+  if(code.indexOf('unavailable')!==-1 || code.indexOf('deadline-exceeded')!==-1) return (stage||'Cloud sync')+' عارضی طور پر دستیاب نہیں — انٹرنیٹ/Firestore connection چیک کریں۔';
+  if(code.indexOf('failed-precondition')!==-1) return (stage||'Cloud sync')+' ناکام: Firestore configuration/index کی ضرورت ہے۔';
+  if(code.indexOf('resource-exhausted')!==-1) return (stage||'Cloud sync')+' ناکام: Firebase quota/limit پوری ہو گئی۔';
+  return (stage||'Cloud sync')+' ناکام'+(code?' ('+code+')':'')+(msg?' — '+msg.slice(0,150):'');
+}
 function setAccountSyncStatus(text, state){
   const el = document.getElementById('accountSyncStatus');
   if(el) el.textContent = 'Sync status: ' + text;
@@ -13191,7 +13216,7 @@ function attemptPush(){
       }
       if(localVersion>lastPushedVersion){setAccountSyncStatus('mazeed local changes sync ho rahi hain…','saving');attemptPush();}
       else {setAccountSyncStatus('sab devices par sync ho gaya', 'ok');flushCloudHistoryQueue();autoCloudBackupIfDue();}
-    }).catch(function(err){ console.error('Cloud push failed', err); if(hasUnresolvedSyncConflicts()){setAccountSyncStatus('sync conflict — Settings mein decision chahiye','error');updateSyncConflictBanner();}else setAccountSyncStatus('sync fail hua — internet check karein', 'error'); });
+    }).catch(function(err){ console.error('Cloud push failed', err); if(hasUnresolvedSyncConflicts()){setAccountSyncStatus('sync conflict — Settings mein decision chahiye','error');updateSyncConflictBanner();}else setAccountSyncStatus(friendlyCloudSyncError(err,'Cloud save'), 'error'); });
   }, 1200);
 }
 
@@ -13375,7 +13400,7 @@ function startCloudSync(uid){
   }, function(err){
     console.error('Cloud sync listen failed', err);
     hideMobileCloudStartupGate();
-    setAccountSyncStatus('sync connect nahi ho saka — internet check karein', 'error');
+    setAccountSyncStatus(friendlyCloudSyncError(err,'Cloud connection'), 'error');
   });
 }
 
@@ -13569,6 +13594,13 @@ let pendingGoogleShopSetup = false;
 function isGoogleUser(user){
   return !!(user && Array.isArray(user.providerData) && user.providerData.some(function(p){return p && p.providerId==='google.com';}));
 }
+function hasCompleteGoogleShopProfile(){
+  const p=shopProfile||{};
+  const base=!!(String(p.shopName||'').trim() && String(p.ownerName||'').trim() && String(p.shopPhone||'').trim() && String(p.shopAddress||'').trim() && String(p.shopCity||'').trim());
+  if(!base) return false;
+  if((p.rentType||'rented')==='rented' && (!(Number(p.monthlyRent)>0) || !(Number(p.rentDueDay)>=1 && Number(p.rentDueDay)<=31))) return false;
+  return true;
+}
 function maybeOpenShopSetup(force){
   if(!fbUser || !isGoogleUser(fbUser)) return;
   if(!force && (shopProfile.shopName || shopProfile.ownerName)) return;
@@ -13597,9 +13629,9 @@ function googleSignIn(){
   provider.setCustomParameters({prompt:'select_account'});
   document.getElementById('accountErrorMsg').style.display='none';
   fbAuth.signInWithPopup(provider).then(function(result){
-    pendingGoogleShopSetup = !!(result && result.additionalUserInfo && result.additionalUserInfo.isNewUser);
+    pendingGoogleShopSetup = !!(result && result.user && !hasCompleteGoogleShopProfile());
     showToast('✓ Google se sign in ho gaya.');
-    setTimeout(function(){ maybeOpenShopSetup(pendingGoogleShopSetup); }, 350);
+    setTimeout(function(){ if(pendingGoogleShopSetup) maybeOpenShopSetup(true); }, 350);
   }).catch(function(err){
     if(err && (err.code==='auth/popup-blocked' || err.code==='auth/operation-not-supported-in-this-environment')){
       try{ sessionStorage.setItem('mobileLedger_googleRedirect','1'); }catch(e){}
@@ -13617,7 +13649,11 @@ document.getElementById('setup-rent-type').addEventListener('change',function(){
   document.getElementById('setup-rent-amount').required=rented;
   document.getElementById('setup-rent-day').required=rented;
 });
-document.getElementById('btnCompleteShopSetup').onclick=function(){
+document.getElementById('btnCompleteShopSetup').onclick=async function(){
+  const saveBtn=document.getElementById('btnCompleteShopSetup');
+  if(saveBtn.disabled) return;
+  saveBtn.disabled=true; saveBtn.textContent='Saving…';
+  try{
   const shopName=document.getElementById('setup-shopname').value.trim();
   const ownerName=document.getElementById('setup-ownername').value.trim();
   const shopPhone=document.getElementById('setup-shopphone').value.trim();
@@ -13641,12 +13677,23 @@ document.getElementById('btnCompleteShopSetup').onclick=function(){
   try{ localStorage.setItem(shopStorageKey(LS_SHOP_PROFILE_KEY), JSON.stringify(shopProfile)); }catch(e){}
   if(fbDb && fbUser && userRole!=='admin'){
     userAccessStatus='active'; userAccessReason='';
-    fbDb.collection('users').doc(fbUser.uid).set({shopName:shopName,ownerName:ownerName,shopPhone:shopPhone,shopAddress:shopAddress,shopCity:shopCity,rentType:rentType,monthlyRent:rentType==='rented'?monthlyRent:0,rentDueDay:rentDueDay,accessStatus:'active',accessReason:'',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(e){console.warn('Shop setup sync failed',e);});
+    await fbDb.collection('users').doc(fbUser.uid).set({role:'shop',shopId:fbUser.uid,shopName:shopName,ownerName:ownerName,shopPhone:shopPhone,shopAddress:shopAddress,shopCity:shopCity,rentType:rentType,monthlyRent:rentType==='rented'?monthlyRent:0,rentDueDay:rentDueDay,accessStatus:'active',accessReason:'',email:fbUser.email||null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
   }
-  if(accessStatusAllowsUse()) schedulePush(); updateAccountUI();
+  if(accessStatusAllowsUse()){
+    schedulePush();
+    if(!cloudUnsub) startCloudSync(fbUser.uid);
+    subscribeUserNotifications();
+  }
+  updateAccountUI();
   document.getElementById('shopSetupOverlay').classList.add('hidden');
   pendingGoogleShopSetup=false;
+  setAuthGateView('unlocked');
   showToast('✓ Shop profile save ho gaya.');
+  }catch(saveError){
+    console.error('Required Google shop setup save failed',saveError);
+    const errBox=document.getElementById('shopSetupError');
+    if(errBox){errBox.textContent=friendlyCloudSyncError(saveError,'Shop profile save');errBox.style.display='block';}
+  }finally{saveBtn.disabled=false;saveBtn.textContent='Save & Continue';}
 };
 
 document.getElementById('btnAccountChangePassword').onclick=function(){
