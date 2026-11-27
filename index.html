@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+<!-- v239 — Full App Urdu Visual Polish — 27 Nov 2026: Extended Urdu-only readability, RTL spacing, form controls, buttons, cards, lists, tables and sheets across the app. English mode, business logic, calculations, Firebase and data schema unchanged. -->
+
 <!--
 - Index v200 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
-Current file version: Index v235 - Urdu Analytics Professional Polish - 27 Nov 2026 • 08:36 PM PKT
+Current file version: Index v239 - Full App Urdu Visual Polish - 27 Nov 2026
 Version name: Centralized Bilingual Translation Registry
 Change summary: Consolidated runtime translation storage into one canonical dictionary object. Existing Urdu/English phrase mappings, legacy mappings, placeholder patterns, English microcopy and dynamic translation behavior are preserved through compatibility registration APIs. No unverified entries were deleted.\nChange summary: Locked Rented as the default shop type for new account signup while preserving the user's ability to choose Owned Shop; moved Demo beside Create Account and placed the temporary-demo instruction below. Added permanent AI/developer instructions for both requirements.
 Change summary: Applied the full user-provided Urdu review across original Urdu-mode source strings and English-mode labels, including mixed-language UI, missing Urdu labels, awkward Urdu, payment/admin messages, analytics labels, ad manager, date/time and dynamic status text. Existing calculations, data, Firebase and business behavior are preserved.
@@ -14928,6 +14930,114 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
   }
 })();
 </script>
+<style id="mh-v239-full-app-urdu-polish">
+/* v239: Extend the established Urdu readability system across the full app. Urdu-mode only. */
+body.mh-urdu-mode {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+body.mh-urdu-mode :is(h1,h2,h3,h4,h5,h6,p,label,small,strong, .settings-note,
+  .sec-label,.menu-item-text,.settings-category-title,.settings-category-sub,
+  .settings-page-title,.card-title,.stat-label,.report-summary,.report-row,
+  .sale-meta,.price-hint,.entry-field-heading,.entry-date-guidance,
+  .account-meta-label,.sold-detail-heading,.empty,.toast,.save-error-banner) {
+  line-height: 1.75;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+/* Consistent RTL reading direction for app surfaces, without reversing numeric data. */
+body.mh-urdu-mode :is(.sheet,.settings-view,.settings-section-card,.settings-card,
+  .settings-category,.settings-action-list,.menu-item,.card,.stat-card,
+  .report-summary,.report-list,.report-row,.cost-summary,.phone-expense-list,
+  .sale-meta,.sold-detail-heading,.account-meta-label,.account-meta-value,
+  .entry-field-heading,.entry-date-guidance,.field,.date-time-field) {
+  direction: rtl;
+  text-align: right;
+}
+/* Form controls: comfortable touch targets and readable labels. */
+body.mh-urdu-mode :is(.field label,.field .label,.sec-label,.entry-field-heading) {
+  display: block;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 6px;
+}
+body.mh-urdu-mode :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,
+  .big-input,.field input,.field select,.field textarea) {
+  min-height: 43px;
+  line-height: 1.6;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  box-sizing: border-box;
+}
+body.mh-urdu-mode textarea { min-height: 88px; }
+/* App buttons, chips and filters: clearer labels and reliable tap area. */
+body.mh-urdu-mode :is(button,.btn-primary,.btn-secondary,.btn-save,.btn-cancel,
+  .sell-btn,.auth-primary,.stats-period-btn,.cta-period-btn,.chip,.chip-opt,
+  .settings-toggle-chip,.settings-opt,.access-tab,.history-icon-btn,
+  .icon-btn,.contact-action-btn,.activity-action-btn) {
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+body.mh-urdu-mode :is(.btn-primary,.btn-secondary,.btn-save,.btn-cancel,
+  .sell-btn,.auth-primary,.stats-period-btn,.cta-period-btn,.access-tab) {
+  min-height: 42px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  white-space: normal;
+}
+body.mh-urdu-mode :is(.chip-row,.chips-scroll,.settings-opts,.settings-action-list) {
+  row-gap: 9px;
+}
+/* Cards and list rows: more breathing room across Stock, Sold, Purchases and Settings. */
+body.mh-urdu-mode :is(.settings-section-card,.settings-card,.settings-category,
+  .stat-card,.report-summary,.cost-summary,.card,.report-row,.menu-item) {
+  min-width: 0;
+}
+body.mh-urdu-mode :is(.settings-section-card,.settings-card,.settings-category,
+  .stat-card,.report-summary,.cost-summary,.card) {
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+body.mh-urdu-mode :is(.menu-item,.settings-category) { gap: 10px; }
+body.mh-urdu-mode :is(.settings-category-title,.settings-page-title,.card-title,
+  .sold-detail-heading) { font-size: 14px; font-weight: 750; }
+body.mh-urdu-mode :is(.settings-note,.settings-category-sub,.price-hint,
+  .entry-date-guidance,.account-meta-label,.stat-label) {
+  font-size: 12px;
+  line-height: 1.8;
+}
+/* Tables and dense data: keep text RTL while preserving numbers and identifiers LTR. */
+body.mh-urdu-mode table { direction: rtl; }
+body.mh-urdu-mode th { line-height: 1.7; white-space: normal; }
+body.mh-urdu-mode td { line-height: 1.65; }
+body.mh-urdu-mode :is(.num,.stat-value,.account-meta-value,.price-col,
+  input[type=number],input[type=tel],input[type=email],input[type=date],
+  input[type=time],input[inputmode=numeric]) {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+/* Sheets and overlays: consistent title/action spacing in Urdu mode. */
+body.mh-urdu-mode :is(.sheet-head,.sheet-actions) { gap: 10px; }
+body.mh-urdu-mode .sheet-head { direction: rtl; }
+body.mh-urdu-mode .sheet-head :is(h1,h2,h3,.title) { line-height: 1.7; }
+body.mh-urdu-mode .sheet-actions button { min-height: 44px; }
+/* Toasts and status badges must wrap instead of clipping Urdu words. */
+body.mh-urdu-mode :is(.badge,.badges,.toast,.save-error-banner,.empty) {
+  line-height: 1.7;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media(max-width:420px) {
+  body.mh-urdu-mode :is(.settings-section-card,.settings-card,.settings-category,
+    .stat-card,.report-summary,.cost-summary,.card) { padding-inline: 11px; }
+  body.mh-urdu-mode :is(.btn-primary,.btn-secondary,.btn-save,.btn-cancel,
+    .sell-btn,.auth-primary,.stats-period-btn,.cta-period-btn,.access-tab) {
+    font-size: 12px;
+  }
+}
+</style>
 </body>
 </html>
 
