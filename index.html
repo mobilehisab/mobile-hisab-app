@@ -21,7 +21,8 @@ INSTRUCTIONS FOR ANY AI/DEVELOPER RECEIVING THIS FILE:
 9. LOCKED FEATURE — NEW ACCOUNT SHOP RENT DEFAULT: In the Create Account flow, the shop type must default to "Rented" for every new account. Keep the Rent amount and Rent date fields visible/required when Rented is selected. The user may intentionally choose "Owned Shop"; do not remove that option or force rented after the user changes it. Never change, remove, hide, or alter this default behavior unless the user explicitly requests it. Treat this as a locked product requirement across all future AI edits.
 10. SIGNUP DEMO BUTTON LAYOUT: Keep the Demo button alongside the Create Account button in the signup action row. Keep the temporary-demo explanatory instruction directly below these buttons. Do not move the Demo button back to a separate standalone position unless explicitly requested.
 
-VERSION HISTORY (newest first):\n- Index v235 — Urdu Analytics Professional Polish — 27 Nov 2026 • 08:36 PM PKT. Improved Urdu-only Analytics typography, RTL alignment, readable card hierarchy and spacing; localized monthly average descriptions and chart legends. English UI, chart design/colors, calculations, Firebase, data and app features are unchanged.\n- Index v234 — Urdu Sync Status Wording — 27 Nov 2026 • 08:18 PM PKT. Urdu sync status now clearly distinguishes syncing, successful sync, offline pending saves, and sync failures; sync state logic and detailed account errors are preserved.\n- Index v233 — Time Display Language Refresh — 27 Nov 2026 • 08:14 PM PKT. Refreshes existing mobile-card time labels after language changes; stored timestamps and calculations are unchanged.\n- Index v232 — Centralized Bilingual Translation Registry — 27 Nov 2026 • 07:43 PM PKT. Unified runtime translation storage into one canonical dictionary; preserved existing English/Urdu mappings and dynamic translation behavior, and added a complete Urdu sync-status phrase. No entries were removed without proof they were unused.
+VERSION HISTORY (newest first):\n- Index v236 — Urdu Analytics RTL & Readability Refinement — 27 Nov 2026 • 08:53 PM PKT. Refined Urdu-only Analytics typography, RTL alignment, card grid balance, graph labels and chart spacing based on screen recording. English UI, chart colors, calculations, Firebase, data and app features are unchanged.
+- Index v235 — Urdu Analytics Professional Polish — 27 Nov 2026 • 08:36 PM PKT. Improved Urdu-only Analytics typography, RTL alignment, readable card hierarchy and spacing; localized monthly average descriptions and chart legends. English UI, chart design/colors, calculations, Firebase, data and app features are unchanged.\n- Index v234 — Urdu Sync Status Wording — 27 Nov 2026 • 08:18 PM PKT. Urdu sync status now clearly distinguishes syncing, successful sync, offline pending saves, and sync failures; sync state logic and detailed account errors are preserved.\n- Index v233 — Time Display Language Refresh — 27 Nov 2026 • 08:14 PM PKT. Refreshes existing mobile-card time labels after language changes; stored timestamps and calculations are unchanged.\n- Index v232 — Centralized Bilingual Translation Registry — 27 Nov 2026 • 07:43 PM PKT. Unified runtime translation storage into one canonical dictionary; preserved existing English/Urdu mappings and dynamic translation behavior, and added a complete Urdu sync-status phrase. No entries were removed without proof they were unused.
 - Index v231 — Safe Automatic App Updates After Offline Data Sync — 27 Nov 2026 • 03:14 PM PKT. Automatic app-shell updates wait until unsynced local business changes and queued cloud activity history are safely synced; offline business data is not cleared.\n- Index v230 — Contact Us English Label — 27 Nov 2026 • 02:54 PM PKT. English mode displays “Contact Us”; Urdu mode retains “ہم سے رابطہ کریں”.\n- Index v229 — Manifest Filename Alignment — 27 Nov 2026 • 02:46 PM PKT. Corrected the HTML manifest link to manifest.json so Chrome can load the manifest under the agreed filename.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:55 AM PKT. New account signup defaults to Rented (user can still select Owned); Demo button sits beside Create Account and its temporary-data note appears below. Added locked AI/developer instructions.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:45 AM PKT. Restored the orange rent-adjusted profit panel in dashboard and analytics rent cards; retained existing calculation and avoided double-deducting paid rent.\n- Index v210 — English Translation Improvements — 20 Nov 2026 • 10:08 PM PKT. Expanded English-mode coverage for hardcoded Urdu/Roman Urdu labels, analytics headings, descriptions, graph labels, stock-entry title, and dynamic sync status. Urdu and Roman Urdu wording, app UI, calculations, Firebase, stored data and business behavior are preserved.
 - Index v209 — Unified Translation Dictionary — 20 Nov 2026 • 07:57 PM PKT. Repaired legacy translation registration: Urdu/English mappings now merge instead of replacing existing mappings; consolidated Share/Feedback/Contact/About labels into the original dictionary and removed the duplicate registration call. Preserved approved v207 translation content, app features, Firebase, data and business calculations.\n- Index v207 — Complete Urdu Label Coverage — 20 Nov 2026 • 06:56 PM PKT. Completed the supplied Urdu translation review: localized mixed Roman Urdu/Hinglish labels, demo and login text, analytics headings, settings and ad-manager wording, payment/contact labels, and corrected awkward Urdu alerts and status text. English-mode wording, calculations, demo data, Firebase and all unrelated behavior are preserved.\n- Index v203 — Demo Monthly Analytics Empty-State Fix — 20 Nov 2026 • 01:50 PM PKT. Fixed the monthly performance renderer aborting in temporary Demo mode when the optional soldHistory global is absent. Monthly history now derives its earliest date safely from demo inventory purchase and sale dates, and supports optional soldHistory without throwing. Demo data, calculations, Firebase, UI outside this analytics fix and non-demo behavior are preserved.\n- Index v172 — Busiest Hours Separated Axis Labels — 14 Nov 2026 • 08:15 AM PKT. Replaced combined time-range labels with individually spaced hour markers (9, 12, 3, 6, 9) on grouped business-hour charts; underlying hourly data, grouping, calculations and day/night ranges are unchanged.
 - Index v172 — Busiest Hours Separated Axis Labels — 14 Nov 2026 • 08:00 AM PKT. Simplified grouped time-axis labels into compact interval ranges, improved chart spacing and label hierarchy to prevent crowded Urdu/English axis text. Hourly data, grouping, calculations and day/night ranges are unchanged.\n- Index v168 — Busiest Hours Full Day Axis Labels — 14 Nov 2026 • 07:30 AM PKT. Demo purchases and sales are distributed by weekday and time-of-day: Friday is very quiet, Saturday/Sunday are busiest, and the strongest time window is 11 AM–1 PM, followed by a clear 2–4 PM lull and a gradual evening/night rise. Daily activity is distributed in smoother multi-day waves so purchase, sales and profit charts avoid abrupt random spikes. October remains full-month; November is limited to elapsed calendar days. Purchase dates remain on or before sale dates; analytics continue to use the same underlying transaction records.\n- Index v167 — Realistic Demo Trading Patterns — 14 Nov 2026 • 07:09 AM PKT. Demo activity was shaped by weekday and broad time-of-day patterns; Friday was quiet and weekends busier.\n- Index v166 — Demo Analytics Data Alignment — 13 Nov 2026 • 11:23 PM PKT. Fixed Demo Analytics purchase-unit counting so every completed sale contributes its corresponding purchase on the original buy date, alongside remaining stock. October and elapsed November purchase/sale units now closely match; November includes only activity through 13 Nov and future daily transactions are added as dates pass. Existing sales, original buy prices, profit bands, stock cap, rent and production analytics behavior are preserved.\n- Index v165 — Demo Current-Month Timeline — 13 Nov 2026 • 11:15 PM PKT. Demo timeline now reflects only elapsed days in November: no future-dated sales, purchases or expenses; every sold mobile is purchased on or before its sale date; additional 1–5 daily sales are generated on each fresh Demo launch as November days pass. Existing original buy prices, Rs. 500 sale-price increments, profit bands, 20 available stock units, Rs. 20,000 unpaid rent, and temporary-only demo isolation are preserved.\n- Index v164 — Original Buy Rates, Rs. 500 Sale Prices & 20-Unit Demo Stock — 13 Nov 2026 • 11:07 PM PKT. Demo uses exact backup purchase prices minus Rs. 2,000, sale prices rounded to Rs. 500, randomized per-unit profit bands (minimum Rs. 3,000; above Rs. 30,000 buy price minimum Rs. 4,000 and maximum Rs. 7,000), and exactly 20 available stock mobiles. Demo rent remains Rs. 20,000 and unpaid.\n- Index v163 — Demo Sales Pacing & Profit Rules — 13 Nov 2026 • 10:36 PM PKT. Reduced demo sales to 52 completed transactions (54 mobile units), spread sales across days with mostly 2–3 units and occasional 1, 4 or 5; each mobile profit is at least Rs. 3,000, and mobiles bought above Rs. 30,000 earn Rs. 4,000–7,000. Monthly rent remains Rs. 20,000 and unpaid; rent is estimated separately to avoid double-counting.\n- Index v162 — Demo Minimum Rs. 3,000 Profit & Unpaid Rent — 13 Nov 2026 • 10:36 PM PKT. Updated every completed demo sale to show at least Rs. 3,000 profit per mobile after mobile expenses; reduced operating expenses; set monthly rent to Rs. 20,000, deducted as an unpaid rent accrual, and left both months marked unpaid. Existing demo isolation, original app calculations, charts, Firebase and all non-demo behavior are preserved.\n- Index v159 — Temporary Demo Mode — 13 Nov 2026 • 10:22 PM PKT. Added a login-screen Demo option with isolated temporary storage, backup-based demo inventory and sales, and protection against cloud and persistent local writes.
@@ -1237,6 +1238,99 @@ body.menu-open .app>header{z-index:1!important;}
 @media(max-width:380px){.analytics-custom-fields{grid-template-columns:1fr 1fr;}.analytics-apply-btn{grid-column:1 / -1;width:100%;}.analytics-period{font-size:10px;padding-left:2px;padding-right:2px;}}
 @media(min-width:700px){.analytics-scoreboard{grid-template-columns:repeat(3,1fr);}.analytics-sheet{max-width:720px;margin:20px auto;border-radius:18px;}}
 .analytics-weekday-grid{display:grid;gap:9px}.analytics-weekday-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;align-items:center}.analytics-weekday-name{font-size:10px;font-weight:900;color:var(--text-dim)}.analytics-weekday-metrics{display:grid;gap:4px}.analytics-mini-track{height:14px;border-radius:5px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden;position:relative}.analytics-mini-fill{height:100%;min-width:0;border-radius:4px}.analytics-mini-fill.sold{background:var(--pta)}.analytics-mini-fill.bought{background:var(--nonpta)}.analytics-mini-fill.profit{background:var(--text);opacity:.68}.analytics-mini-label{position:absolute;inset:0;padding-left:5px;display:flex;align-items:center;font-size:8.5px;font-weight:900;color:var(--text)}.analytics-average-grid,.analytics-pending-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.analytics-average-item,.analytics-pending-item{padding:10px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);min-width:0}.analytics-average-label,.analytics-pending-label{font-size:9.5px;color:var(--text-dim);font-weight:900}.analytics-average-value,.analytics-pending-value{font-size:16px;font-weight:900;margin-top:4px;overflow-wrap:anywhere}.analytics-average-sub,.analytics-pending-sub{font-size:9.5px;color:var(--text-faint);line-height:1.4;margin-top:4px}.analytics-detail-list{display:grid;gap:6px;margin-top:8px}.analytics-detail-row{display:flex;justify-content:space-between;gap:10px;font-size:10px;padding:7px 0;border-bottom:1px solid var(--border)}.analytics-detail-row:last-child{border-bottom:0}
+
+/* v236: Urdu-only Analytics readability and RTL refinement. English mode is intentionally untouched. */
+body.mh-urdu-mode .analytics-sheet{direction:rtl;text-align:right;}
+body.mh-urdu-mode .analytics-sheet .analytics-period-title,
+body.mh-urdu-mode .analytics-sheet .analytics-card-title,
+body.mh-urdu-mode .analytics-sheet .analytics-card-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-snapshot-label,
+body.mh-urdu-mode .analytics-sheet .analytics-score-label,
+body.mh-urdu-mode .analytics-sheet .analytics-score-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-average-label,
+body.mh-urdu-mode .analytics-sheet .analytics-average-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-label,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-quantity-note,
+body.mh-urdu-mode .analytics-sheet .analytics-time-summary,
+body.mh-urdu-mode .analytics-sheet .analytics-time-missing{ text-align:right; }
+body.mh-urdu-mode .analytics-sheet .analytics-periods{direction:rtl;}
+body.mh-urdu-mode .analytics-sheet .analytics-period{font-size:12px;line-height:1.55;min-height:38px;padding:8px 10px;white-space:normal;}
+body.mh-urdu-mode .analytics-sheet .analytics-period-note{font-size:12px;line-height:1.75;text-align:right;}
+body.mh-urdu-mode .analytics-sheet .analytics-snapshot-grid{direction:rtl;gap:9px;}
+body.mh-urdu-mode .analytics-sheet .analytics-snapshot-item{padding:11px;display:flex;flex-direction:column;justify-content:space-between;min-height:76px;}
+body.mh-urdu-mode .analytics-sheet .analytics-snapshot-value{direction:ltr;text-align:left;font-size:19px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-snapshot-label{font-size:12px;line-height:1.65;color:var(--text-dim);overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-scoreboard{direction:rtl;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+body.mh-urdu-mode .analytics-sheet .analytics-scoreboard .analytics-score:nth-child(1),
+body.mh-urdu-mode .analytics-sheet .analytics-scoreboard .analytics-score:nth-child(2),
+body.mh-urdu-mode .analytics-sheet .analytics-scoreboard .analytics-score:nth-child(6){grid-column:auto;}
+body.mh-urdu-mode .analytics-sheet .analytics-score{padding:12px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;}
+body.mh-urdu-mode .analytics-sheet .analytics-score-label{font-size:12px;line-height:1.6;letter-spacing:0;text-transform:none;}
+body.mh-urdu-mode .analytics-sheet .analytics-score-value{direction:ltr;text-align:left;font-size:22px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-score.profit-score .analytics-score-value,
+body.mh-urdu-mode .analytics-sheet .analytics-score.mobile-average-score .analytics-score-value{font-size:25px;}
+body.mh-urdu-mode .analytics-sheet .analytics-score-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-change,
+body.mh-urdu-mode .analytics-sheet .analytics-diff{font-size:11.5px;line-height:1.65;}
+body.mh-urdu-mode .analytics-sheet .analytics-card{padding:13px;margin-bottom:12px;}
+body.mh-urdu-mode .analytics-sheet .analytics-card-head{direction:rtl;align-items:flex-start;flex-wrap:wrap;}
+body.mh-urdu-mode .analytics-sheet .analytics-card-title{font-size:14px;line-height:1.7;letter-spacing:0;}
+body.mh-urdu-mode .analytics-sheet .analytics-card-sub{font-size:12px;line-height:1.7;color:var(--text-dim);}
+body.mh-urdu-mode .analytics-sheet .analytics-card-head select{font-size:12px;max-width:48%;min-height:38px;}
+body.mh-urdu-mode .analytics-sheet .analytics-legend,
+body.mh-urdu-mode .analytics-sheet .analytics-brand-legend,
+body.mh-urdu-mode .analytics-sheet .analytics-time-legend{direction:rtl;flex-wrap:wrap;gap:9px 14px;font-size:12px;line-height:1.7;}
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap{min-height:235px;padding:8px;}
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap svg{height:225px;}
+body.mh-urdu-mode .analytics-sheet .analytics-month-chart svg{height:250px;}
+body.mh-urdu-mode .analytics-sheet .analytics-bars{direction:rtl;gap:9px;}
+body.mh-urdu-mode .analytics-sheet .analytics-bar-group{padding:10px;min-width:0;}
+body.mh-urdu-mode .analytics-sheet .analytics-bar-title{font-size:12px;line-height:1.6;}
+body.mh-urdu-mode .analytics-sheet .analytics-bar-value{font-size:11px;direction:ltr;}
+body.mh-urdu-mode .analytics-sheet .analytics-bar-label,
+body.mh-urdu-mode .analytics-sheet .analytics-bar-change{font-size:11px;line-height:1.6;}
+body.mh-urdu-mode .analytics-sheet .analytics-brand-row{direction:rtl;grid-template-columns:minmax(58px,76px) minmax(0,1fr);gap:6px 9px;font-size:12px;}
+body.mh-urdu-mode .analytics-sheet .analytics-brand-name{text-align:right;}
+body.mh-urdu-mode .analytics-sheet .analytics-brand-values{direction:rtl;text-align:right;padding-left:0;padding-right:0;font-size:11.5px;line-height:1.7;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-row{direction:rtl;grid-template-columns:minmax(0,1fr) 42px 76px;gap:7px;padding:9px;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-name{font-size:12px;text-align:right;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-sold{font-size:11px;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-profit{font-size:11px;direction:ltr;text-align:left;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-row{direction:rtl;grid-template-columns:minmax(76px,94px) minmax(0,1fr);gap:8px;font-size:11px;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-label{text-align:right;font-size:11px;line-height:1.6;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-value{direction:rtl;justify-content:flex-start;padding:0 7px;text-align:right;font-size:9.5px;white-space:nowrap;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-summary,
+body.mh-urdu-mode .analytics-sheet .analytics-time-missing{font-size:11.5px;line-height:1.75;}
+body.mh-urdu-mode .analytics-sheet .analytics-weekday-row{direction:rtl;grid-template-columns:52px minmax(0,1fr);gap:8px;}
+body.mh-urdu-mode .analytics-sheet .analytics-weekday-name{text-align:right;font-size:11px;}
+body.mh-urdu-mode .analytics-sheet .analytics-mini-label{direction:rtl;justify-content:flex-start;padding:0 7px;font-size:9.5px;white-space:nowrap;}
+body.mh-urdu-mode .analytics-sheet .analytics-average-grid,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-grid{direction:rtl;gap:9px;}
+body.mh-urdu-mode .analytics-sheet .analytics-average-item,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-item{padding:11px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
+body.mh-urdu-mode .analytics-sheet .analytics-average-label,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-label{font-size:11.5px;line-height:1.65;}
+body.mh-urdu-mode .analytics-sheet .analytics-average-value,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-value{direction:ltr;text-align:left;font-size:18px;overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-average-sub,
+body.mh-urdu-mode .analytics-sheet .analytics-pending-sub{font-size:11px;line-height:1.7;color:var(--text-dim);}
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row{direction:rtl;align-items:flex-start;font-size:11.5px;line-height:1.7;}
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row strong,
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row b{direction:ltr;text-align:left;}
+body.mh-urdu-mode .analytics-sheet .analytics-custom-fields{direction:rtl;}
+body.mh-urdu-mode .analytics-sheet .analytics-custom-fields label{font-size:11px;text-align:right;}
+body.mh-urdu-mode .analytics-sheet .analytics-custom-fields input{direction:ltr;text-align:left;font-size:13px;min-height:40px;}
+body.mh-urdu-mode .analytics-sheet .analytics-apply-btn{font-size:12px;min-height:40px;}
+@media(max-width:380px){
+ body.mh-urdu-mode .analytics-sheet .analytics-scoreboard{gap:7px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-score{padding:9px;min-height:88px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-score-value{font-size:19px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-time-row{grid-template-columns:70px minmax(0,1fr);gap:5px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-time-value{font-size:8.5px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-mini-label{font-size:8px;}
+}
+
 </style>
 <style id="badge-only-settings-style">
 .badge-only-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -9897,7 +9991,7 @@ function analyticsRenderMonthlyPerformance(){
   const avgBox=document.getElementById('analyticsMonthlyAverages');
   const isUrduAnalytics=document.body.classList.contains('mh-urdu-mode');
   if(avgBox)avgBox.innerHTML=(isUrduAnalytics?[
-    ['فی مکمل مہینے میں اوسط فروخت',avgSold.toFixed(1)],['فی مکمل مہینے میں اوسط خریداری',avgPurchased.toFixed(1)],['فی مکمل مہینے میں اوسط منافع','Rs '+fmt(avgProfitPerMonth)],['فی موبائل اوسط منافع (صرف موبائل کی اپنی لاگت، مکمل مہینوں کی بنیاد پر)','Rs '+fmt(avgProfitPerMobile)]
+    ['فی مکمل مہینے میں اوسط فروخت',avgSold.toFixed(1)],['فی مکمل مہینے میں اوسط خریداری',avgPurchased.toFixed(1)],['فی مکمل مہینے میں اوسط منافع','Rs '+fmt(avgProfitPerMonth)],['فی موبائل اوسط منافع (خریداری اور اسی فون کے خرچ کے بعد)','Rs '+fmt(avgProfitPerMobile)]
   ]:[
     ['Avg sold / completed month',avgSold.toFixed(1)],['Avg purchased / completed month',avgPurchased.toFixed(1)],['Avg net profit / completed month','Rs '+fmt(avgProfitPerMonth)],['Avg mobile profit (phone cost only · completed months)','Rs '+fmt(avgProfitPerMobile)]
   ]).map(function(x){return '<div class="analytics-snapshot-item"><div class="analytics-snapshot-value">'+x[1]+'</div><div class="analytics-snapshot-label">'+x[0]+'</div></div>';}).join('');
