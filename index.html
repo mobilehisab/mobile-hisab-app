@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- v240 — Complete Mobile UI Visual System — 27 Nov 2026 • 10:19 PM PKT: Completed the eight-phase UI-only visual refinement: semantic colors and contrast, typography, touch targets, layer scale, header and inventory hierarchy, sheets, payments, dashboard, settings, authentication, drawer, splash controls and Urdu/RTL presentation. Existing features, calculations, fields, translations, Firebase, data and business behavior are unchanged. -->
+<!-- v239 — Full App Urdu Visual Polish — 27 Nov 2026: Extended Urdu-only readability, RTL spacing, form controls, buttons, cards, lists, tables and sheets across the app. English mode, business logic, calculations, Firebase and data schema unchanged. -->
 
 <!--
 - Index v200 — Daily Averages Previous Period Denominator Fix — 17 Nov 2026. Fixed daily average comparisons: previous-period metrics were passed correctly, but the renderer incorrectly tried to read date fields from the metrics object, leaving previous-day count at zero. It now reads the dates from range.previous.
 MOBILE HISAB — SELF-DESCRIBING INDEX / AI DEVELOPER INSTRUCTIONS
-Current file version: Index v240 - Complete Mobile UI Visual System - 27 Nov 2026
-Version name: Complete Mobile UI Visual System
+Current file version: Index v239 - Full App Urdu Visual Polish - 27 Nov 2026
+Version name: Centralized Bilingual Translation Registry
 Change summary: Consolidated runtime translation storage into one canonical dictionary object. Existing Urdu/English phrase mappings, legacy mappings, placeholder patterns, English microcopy and dynamic translation behavior are preserved through compatibility registration APIs. No unverified entries were deleted.\nChange summary: Locked Rented as the default shop type for new account signup while preserving the user's ability to choose Owned Shop; moved Demo beside Create Account and placed the temporary-demo instruction below. Added permanent AI/developer instructions for both requirements.
 Change summary: Applied the full user-provided Urdu review across original Urdu-mode source strings and English-mode labels, including mixed-language UI, missing Urdu labels, awkward Urdu, payment/admin messages, analytics labels, ad manager, date/time and dynamic status text. Existing calculations, data, Firebase and business behavior are preserved.
 Change summary: Applied the user's full Urdu translation review: corrected Roman Urdu/Hinglish strings, missing Urdu labels, mixed Urdu-English phrases, awkward translations, toast messages, dynamic date labels, and admin/read-only wording. English mode content and business logic are preserved.
@@ -23,7 +23,7 @@ INSTRUCTIONS FOR ANY AI/DEVELOPER RECEIVING THIS FILE:
 9. LOCKED FEATURE — NEW ACCOUNT SHOP RENT DEFAULT: In the Create Account flow, the shop type must default to "Rented" for every new account. Keep the Rent amount and Rent date fields visible/required when Rented is selected. The user may intentionally choose "Owned Shop"; do not remove that option or force rented after the user changes it. Never change, remove, hide, or alter this default behavior unless the user explicitly requests it. Treat this as a locked product requirement across all future AI edits.
 10. SIGNUP DEMO BUTTON LAYOUT: Keep the Demo button alongside the Create Account button in the signup action row. Keep the temporary-demo explanatory instruction directly below these buttons. Do not move the Demo button back to a separate standalone position unless explicitly requested.
 
-VERSION HISTORY (newest first):\n- Index v240 — Complete Mobile UI Visual System — 27 Nov 2026 • 10:19 PM PKT. Completed the eight-phase UI-only visual refinement: semantic colors and contrast, typography, touch targets, layer scale, header and inventory hierarchy, sheets, payments, dashboard, settings, authentication, drawer, splash controls and Urdu/RTL presentation. Existing features, calculations, fields, translations, Firebase, data and business behavior are unchanged.\n- Index v238 — Urdu Analytics Final Graph Label & Axis Refinement — 27 Nov 2026. Kept the existing comparison-line style while improving Urdu legend spacing and series point distinction; refined daily trend axis currency formatting, negative-value display and date-label spacing. English UI, chart colors, calculations, Firebase, data and app features are unchanged.\n- Index v237 — Urdu Analytics Thicker Graphs & Mobile Card Refinement — 27 Nov 2026. Increased Urdu-only analytics bar thickness, line-chart stroke weight, graph label readability and mobile model/detail card spacing. English UI, chart colors, calculations, Firebase, data and app features are unchanged.\n- Index v236 — Urdu Analytics RTL & Readability Refinement — 27 Nov 2026 • 08:53 PM PKT. Refined Urdu-only Analytics typography, RTL alignment, card grid balance, graph labels and chart spacing based on screen recording. English UI, chart colors, calculations, Firebase, data and app features are unchanged.
+VERSION HISTORY (newest first):\n- Index v238 — Urdu Analytics Final Graph Label & Axis Refinement — 27 Nov 2026. Kept the existing comparison-line style while improving Urdu legend spacing and series point distinction; refined daily trend axis currency formatting, negative-value display and date-label spacing. English UI, chart colors, calculations, Firebase, data and app features are unchanged.\n- Index v237 — Urdu Analytics Thicker Graphs & Mobile Card Refinement — 27 Nov 2026. Increased Urdu-only analytics bar thickness, line-chart stroke weight, graph label readability and mobile model/detail card spacing. English UI, chart colors, calculations, Firebase, data and app features are unchanged.\n- Index v236 — Urdu Analytics RTL & Readability Refinement — 27 Nov 2026 • 08:53 PM PKT. Refined Urdu-only Analytics typography, RTL alignment, card grid balance, graph labels and chart spacing based on screen recording. English UI, chart colors, calculations, Firebase, data and app features are unchanged.
 - Index v235 — Urdu Analytics Professional Polish — 27 Nov 2026 • 08:36 PM PKT. Improved Urdu-only Analytics typography, RTL alignment, readable card hierarchy and spacing; localized monthly average descriptions and chart legends. English UI, chart design/colors, calculations, Firebase, data and app features are unchanged.\n- Index v234 — Urdu Sync Status Wording — 27 Nov 2026 • 08:18 PM PKT. Urdu sync status now clearly distinguishes syncing, successful sync, offline pending saves, and sync failures; sync state logic and detailed account errors are preserved.\n- Index v233 — Time Display Language Refresh — 27 Nov 2026 • 08:14 PM PKT. Refreshes existing mobile-card time labels after language changes; stored timestamps and calculations are unchanged.\n- Index v232 — Centralized Bilingual Translation Registry — 27 Nov 2026 • 07:43 PM PKT. Unified runtime translation storage into one canonical dictionary; preserved existing English/Urdu mappings and dynamic translation behavior, and added a complete Urdu sync-status phrase. No entries were removed without proof they were unused.
 - Index v231 — Safe Automatic App Updates After Offline Data Sync — 27 Nov 2026 • 03:14 PM PKT. Automatic app-shell updates wait until unsynced local business changes and queued cloud activity history are safely synced; offline business data is not cleared.\n- Index v230 — Contact Us English Label — 27 Nov 2026 • 02:54 PM PKT. English mode displays “Contact Us”; Urdu mode retains “ہم سے رابطہ کریں”.\n- Index v229 — Manifest Filename Alignment — 27 Nov 2026 • 02:46 PM PKT. Corrected the HTML manifest link to manifest.json so Chrome can load the manifest under the agreed filename.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:55 AM PKT. New account signup defaults to Rented (user can still select Owned); Demo button sits beside Create Account and its temporary-data note appears below. Added locked AI/developer instructions.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:45 AM PKT. Restored the orange rent-adjusted profit panel in dashboard and analytics rent cards; retained existing calculation and avoided double-deducting paid rent.\n- Index v210 — English Translation Improvements — 20 Nov 2026 • 10:08 PM PKT. Expanded English-mode coverage for hardcoded Urdu/Roman Urdu labels, analytics headings, descriptions, graph labels, stock-entry title, and dynamic sync status. Urdu and Roman Urdu wording, app UI, calculations, Firebase, stored data and business behavior are preserved.
 - Index v209 — Unified Translation Dictionary — 20 Nov 2026 • 07:57 PM PKT. Repaired legacy translation registration: Urdu/English mappings now merge instead of replacing existing mappings; consolidated Share/Feedback/Contact/About labels into the original dictionary and removed the duplicate registration call. Preserved approved v207 translation content, app features, Firebase, data and business calculations.\n- Index v207 — Complete Urdu Label Coverage — 20 Nov 2026 • 06:56 PM PKT. Completed the supplied Urdu translation review: localized mixed Roman Urdu/Hinglish labels, demo and login text, analytics headings, settings and ad-manager wording, payment/contact labels, and corrected awkward Urdu alerts and status text. English-mode wording, calculations, demo data, Firebase and all unrelated behavior are preserved.\n- Index v203 — Demo Monthly Analytics Empty-State Fix — 20 Nov 2026 • 01:50 PM PKT. Fixed the monthly performance renderer aborting in temporary Demo mode when the optional soldHistory global is absent. Monthly history now derives its earliest date safely from demo inventory purchase and sale dates, and supports optional soldHistory without throwing. Demo data, calculations, Firebase, UI outside this analytics fix and non-demo behavior are preserved.\n- Index v172 — Busiest Hours Separated Axis Labels — 14 Nov 2026 • 08:15 AM PKT. Replaced combined time-range labels with individually spaced hour markers (9, 12, 3, 6, 9) on grouped business-hour charts; underlying hourly data, grouping, calculations and day/night ranges are unchanged.
@@ -78,14 +78,14 @@ window.__MHE.legacy({"u":{"Apne Mobile Hisab اکاؤنٹ mein login karein. Aap
 <script id="mh-v212-english-microcopy">
 (function(){if(!window.__MHE)return;window.__MHE.legacy({e:{"Nayi stock entry":"New Stock Entry","sab devices par sync ho gaya":"Synced across all devices","کارکردگی کی مدت":"Performance Period","کارکردگی کا موازنہ":"Performance Comparison","منافع cumulative scoring · selected period":"Cumulative Profit · Selected Period","منافع":"Profit","تعداد کا موازنہ":"Quantity Comparison","خریداری بامقابلہ فروخت":"Purchases vs. Sales","خریدے گئے موبائل بامقابلہ فروخت ہوئے موبائل · موجودہ مدت بامقابلہ پچھلی مدت":"Mobiles Purchased vs. Mobiles Sold · Current Period vs. Previous Period","خریداری اور فروخت":"Purchases and Sales","لگائی گئی اور وصول شدہ رقم · موجودہ مدت بامقابلہ پچھلی مدت":"Money Invested and Money Received · Current Period vs. Previous Period","کاروبار کے سب سے مصروف اوقات":"Busiest Business Hours","منتخب مدت میں فروخت اور خریداری کس وقت زیادہ ہوئی":"When sales and purchases were highest during the selected period","☀️ دن (صبح 9 بجے سے رات 9 بجے تک)":"☀️ Day (9 AM–9 PM)","🌙 رات (رات 9 بجے سے صبح 9 بجے تک)":"🌙 Night (9 PM–9 AM)","لائن گراف":"Line Chart","تین گھنٹوں کے گروپ":"3-Hour Groups","صرف درست تاریخ اور وقت والے ریکارڈز ہی گھنٹوں کی رپورٹ میں شامل ہوں گے۔":"Only records with an exact timestamp are included in the hourly breakdown.","پیر تا اتوار · فروخت، خریداری اور منافع":"Monday to Sunday · Sales, Purchases, and Profit","📊 روزانہ اوسط بامقابلہ پچھلی مدت":"📊 Daily Averages vs. Previous Period","منتخب مدت کی روزانہ اوسط بامقابلہ پچھلی مساوی مدت کی اوسط":"Daily averages for the selected period compared with the previous equivalent period","💳 بقایا ادائیگیوں کا جائزہ":"💳 Pending Payments Overview","موجودہ بقایا رقم اور منتخب مدت میں وصول شدہ رقم":"Current outstanding balance and payments received during the selected period","اسٹاک کی کارکردگی":"Stock Performance","موجودہ اسٹاک کا خلاصہ — منتخب مدت تک محدود نہیں":"Current stock summary — not limited to the selected period","برانڈز کی کارکردگی":"Brand Performance","منتخب مدت میں خریداری، فروخت اور حاصل شدہ منافع":"Purchases, sales, and realized profit during the selected period","ماڈلز کی کارکردگی":"Model Performance","فروخت کی تعداد اور حاصل شدہ منافع کے لحاظ سے نمایاں ماڈلز":"Top models by quantity sold and realized profit","📅 ماہانہ کاروباری کارکردگی":"📅 Monthly Business Performance","ماہانہ کاروباری کارکردگی":"Monthly Business Performance","📦 اسٹاک کی مقدار کا موازنہ":"📦 Stock Quantity Comparison","ہر دن کے اختتام پر اسٹاک کی مقدار":"End-of-day stock quantity","📈 خریدے گئے بالمقابل فروخت ہوئے موبائل":"📈 Mobiles Purchased vs. Mobiles Sold","روزانہ موبائلوں کی تعداد":"Daily Number of Mobiles","روزمرہ کا کاروباری رجحان":"Daily Business Trend","روزانہ خریداری، فروخت اور منافع۔":"Daily purchases, sales, and profit.","گزشتہ 28 دن":"Last 28 Days","کسٹمر":"Customer","خریدے گئے موبائل":"Mobiles Purchased","فروخت ہوئے موبائل":"Mobiles Sold","اسٹاک میں دستیاب موبائل":"Available Stock Units","اسٹاک میں لگائی گئی رقم":"Amount Invested in Stock","اسٹاک میں موجود مختلف ماڈلز":"Unique Models in Stock","دستی اندراج کی بقایا رقم":"Manual Receivables","موبائل فروخت کی بقایا رقم":"Pending Mobile Sale Payments","دستی اندراج پر ادا کی جانے والی رقم":"Manual Payables","دستی اندراج کے واجب الادا بل":"Outstanding Manual Bills","ادائیگی کی آخری تاریخ گزر چکی ہے، لیکن رقم ابھی باقی ہے۔":"The due date has passed, but the amount is still outstanding.","منتخب مدت · تفصیلات کے لیے دبائیں":"Selected period · Tap for details","وصول شدہ ادائیگیاں":"Payments Received","موجودہ روزانہ اوسط":"Current Daily Average","موازنہ کرنے کے لیے سابقہ مدت کا ریکارڈ موجود نہیں۔":"No previous-period records are available for comparison.","فروخت ہوئے":"Sold","خریدے":"Purchased","فروخت":"Sales","خریداری":"Purchases","ابھی کا":"Current","پچھلا":"Previous","کاروبار کا خلاصہ":"Business Snapshot","کاروبار کی فروخت، خریداری اور منافع کی تفصیلات۔":"Business sales, purchases, and profit details.","یہاں ماہانہ کرایہ، ادائیگی کی تفصیلات اور منافع میں کرایہ کی کٹوتی کا حساب رکھا جاتا ہے۔":"Track monthly rent, payment status, and rent deductions from profit here.","سیٹنگز میں اپنی دکان منتخب ہے، کرائے کی نہیں، اس لیے ماہانہ کرایہ لاگو نہیں ہوتا۔":"Your own shop is selected in Settings, not a rented shop, so monthly rent does not apply.","نام یا موبائل نمبر سے تلاش کریں۔":"Search by name or phone number.","نام یا فون نمبر لکھیں۔۔۔":"Enter a name or phone number…","تاریخ کا فلٹر صاف کریں":"Clear date filter","نئے پہلے (تازہ ترین)":"Newest First (Latest)","ہر سرگرمی":"All Activity","کاروبار کے کل اخراجات":"Total Business Expenses","منتخب مدت کا کل منافع":"Total Profit for Selected Period","فروخت ہوئے موبائل کی تعداد":"Number of Mobiles Sold","خریدے گئے موبائل کی تعداد":"Number of Mobiles Purchased","کل خریداری کی رقم":"Total Purchase Amount","کل فروخت کی رقم":"Total Sales Amount","موبائل کی خریداری اور فروخت · موجودہ مدت بامقابلہ پچھلی مدت":"Mobile Purchases and Sales · Current Period vs. Previous Period","منتخب مدت میں موبائلوں کی کل تعداد":"Total mobile units in the selected period","منتخب مدت میں خریداری یا فروخت کا کوئی ریکارڈ نہیں ہے۔":"There are no purchase or sales records for this period.","اس مدت میں کوئی موبائل فروخت نہیں ہوا۔":"No mobiles were sold during this period.","اسٹاک کی مقدار کا موازنہ":"Stock Quantity Comparison","روزانہ خریدے اور فروخت ہوئے موبائل · موجودہ مدت بامقابلہ پچھلی مدت":"Daily mobiles purchased and sold · current period vs. previous period","ہر دن کے اختتام پر اسٹاک کی مقدار · نومبر کے دن 20 تک بمقابلہ اکتوبر کے دن 20 تک":"End-of-day stock quantity · November through day 20 vs. October through day 20","ماہانہ کرایہ، ادائیگی کی صورتحال اور منافع میں کرایے کی کٹوتی":"Monthly rent, payment status, and rent deduction from profit","خریداری، فروخت اور حاصل شدہ منافع":"Purchases, sales, and realized profit","منتخب مدت میں فروخت ہوئے موبائل":"Mobiles sold during the selected period","لائف ٹائم فروخت ہوئے موبائل":"Lifetime mobiles sold"}});window.__MHE.enExtra=Object.assign({},window.__MHE.enExtra||{},{"Nayi stock entry":"New Stock Entry","sab devices par sync ho gaya":"Synced across all devices","کارکردگی کی مدت":"Performance Period","کارکردگی کا موازنہ":"Performance Comparison","منافع cumulative scoring · selected period":"Cumulative Profit · Selected Period","منافع":"Profit","تعداد کا موازنہ":"Quantity Comparison","خریداری بامقابلہ فروخت":"Purchases vs. Sales","خریدے گئے موبائل بامقابلہ فروخت ہوئے موبائل · موجودہ مدت بامقابلہ پچھلی مدت":"Mobiles Purchased vs. Mobiles Sold · Current Period vs. Previous Period","خریداری اور فروخت":"Purchases and Sales","لگائی گئی اور وصول شدہ رقم · موجودہ مدت بامقابلہ پچھلی مدت":"Money Invested and Money Received · Current Period vs. Previous Period","کاروبار کے سب سے مصروف اوقات":"Busiest Business Hours","منتخب مدت میں فروخت اور خریداری کس وقت زیادہ ہوئی":"When sales and purchases were highest during the selected period","☀️ دن (صبح 9 بجے سے رات 9 بجے تک)":"☀️ Day (9 AM–9 PM)","🌙 رات (رات 9 بجے سے صبح 9 بجے تک)":"🌙 Night (9 PM–9 AM)","لائن گراف":"Line Chart","تین گھنٹوں کے گروپ":"3-Hour Groups","صرف درست تاریخ اور وقت والے ریکارڈز ہی گھنٹوں کی رپورٹ میں شامل ہوں گے۔":"Only records with an exact timestamp are included in the hourly breakdown.","پیر تا اتوار · فروخت، خریداری اور منافع":"Monday to Sunday · Sales, Purchases, and Profit","📊 روزانہ اوسط بامقابلہ پچھلی مدت":"📊 Daily Averages vs. Previous Period","منتخب مدت کی روزانہ اوسط بامقابلہ پچھلی مساوی مدت کی اوسط":"Daily averages for the selected period compared with the previous equivalent period","💳 بقایا ادائیگیوں کا جائزہ":"💳 Pending Payments Overview","موجودہ بقایا رقم اور منتخب مدت میں وصول شدہ رقم":"Current outstanding balance and payments received during the selected period","اسٹاک کی کارکردگی":"Stock Performance","موجودہ اسٹاک کا خلاصہ — منتخب مدت تک محدود نہیں":"Current stock summary — not limited to the selected period","برانڈز کی کارکردگی":"Brand Performance","منتخب مدت میں خریداری، فروخت اور حاصل شدہ منافع":"Purchases, sales, and realized profit during the selected period","ماڈلز کی کارکردگی":"Model Performance","فروخت کی تعداد اور حاصل شدہ منافع کے لحاظ سے نمایاں ماڈلز":"Top models by quantity sold and realized profit","📅 ماہانہ کاروباری کارکردگی":"📅 Monthly Business Performance","ماہانہ کاروباری کارکردگی":"Monthly Business Performance","📦 اسٹاک کی مقدار کا موازنہ":"📦 Stock Quantity Comparison","ہر دن کے اختتام پر اسٹاک کی مقدار":"End-of-day stock quantity","📈 خریدے گئے بالمقابل فروخت ہوئے موبائل":"📈 Mobiles Purchased vs. Mobiles Sold","روزانہ موبائلوں کی تعداد":"Daily Number of Mobiles","روزمرہ کا کاروباری رجحان":"Daily Business Trend","روزانہ خریداری، فروخت اور منافع۔":"Daily purchases, sales, and profit.","گزشتہ 28 دن":"Last 28 Days","کسٹمر":"Customer","خریدے گئے موبائل":"Mobiles Purchased","فروخت ہوئے موبائل":"Mobiles Sold","اسٹاک میں دستیاب موبائل":"Available Stock Units","اسٹاک میں لگائی گئی رقم":"Amount Invested in Stock","اسٹاک میں موجود مختلف ماڈلز":"Unique Models in Stock","دستی اندراج کی بقایا رقم":"Manual Receivables","موبائل فروخت کی بقایا رقم":"Pending Mobile Sale Payments","دستی اندراج پر ادا کی جانے والی رقم":"Manual Payables","دستی اندراج کے واجب الادا بل":"Outstanding Manual Bills","ادائیگی کی آخری تاریخ گزر چکی ہے، لیکن رقم ابھی باقی ہے۔":"The due date has passed, but the amount is still outstanding.","منتخب مدت · تفصیلات کے لیے دبائیں":"Selected period · Tap for details","وصول شدہ ادائیگیاں":"Payments Received","موجودہ روزانہ اوسط":"Current Daily Average","موازنہ کرنے کے لیے سابقہ مدت کا ریکارڈ موجود نہیں۔":"No previous-period records are available for comparison.","فروخت ہوئے":"Sold","خریدے":"Purchased","فروخت":"Sales","خریداری":"Purchases","ابھی کا":"Current","پچھلا":"Previous","کاروبار کا خلاصہ":"Business Snapshot","کاروبار کی فروخت، خریداری اور منافع کی تفصیلات۔":"Business sales, purchases, and profit details.","یہاں ماہانہ کرایہ، ادائیگی کی تفصیلات اور منافع میں کرایہ کی کٹوتی کا حساب رکھا جاتا ہے۔":"Track monthly rent, payment status, and rent deductions from profit here.","سیٹنگز میں اپنی دکان منتخب ہے، کرائے کی نہیں، اس لیے ماہانہ کرایہ لاگو نہیں ہوتا۔":"Your own shop is selected in Settings, not a rented shop, so monthly rent does not apply.","نام یا موبائل نمبر سے تلاش کریں۔":"Search by name or phone number.","نام یا فون نمبر لکھیں۔۔۔":"Enter a name or phone number…","تاریخ کا فلٹر صاف کریں":"Clear date filter","نئے پہلے (تازہ ترین)":"Newest First (Latest)","ہر سرگرمی":"All Activity","کاروبار کے کل اخراجات":"Total Business Expenses","منتخب مدت کا کل منافع":"Total Profit for Selected Period","فروخت ہوئے موبائل کی تعداد":"Number of Mobiles Sold","خریدے گئے موبائل کی تعداد":"Number of Mobiles Purchased","کل خریداری کی رقم":"Total Purchase Amount","کل فروخت کی رقم":"Total Sales Amount","موبائل کی خریداری اور فروخت · موجودہ مدت بامقابلہ پچھلی مدت":"Mobile Purchases and Sales · Current Period vs. Previous Period","منتخب مدت میں موبائلوں کی کل تعداد":"Total mobile units in the selected period","منتخب مدت میں خریداری یا فروخت کا کوئی ریکارڈ نہیں ہے۔":"There are no purchase or sales records for this period.","اس مدت میں کوئی موبائل فروخت نہیں ہوا۔":"No mobiles were sold during this period.","اسٹاک کی مقدار کا موازنہ":"Stock Quantity Comparison","روزانہ خریدے اور فروخت ہوئے موبائل · موجودہ مدت بامقابلہ پچھلی مدت":"Daily mobiles purchased and sold · current period vs. previous period","ہر دن کے اختتام پر اسٹاک کی مقدار · نومبر کے دن 20 تک بمقابلہ اکتوبر کے دن 20 تک":"End-of-day stock quantity · November through day 20 vs. October through day 20","ماہانہ کرایہ، ادائیگی کی صورتحال اور منافع میں کرایے کی کٹوتی":"Monthly rent, payment status, and rent deduction from profit","خریداری، فروخت اور حاصل شدہ منافع":"Purchases, sales, and realized profit","منتخب مدت میں فروخت ہوئے موبائل":"Mobiles sold during the selected period","لائف ٹائم فروخت ہوئے موبائل":"Lifetime mobiles sold"});})();
 </script>
-<meta name="app-index-version" content="v240">
-<meta name="app-index-version-name" content="Complete Mobile UI Visual System">
-<meta name="app-index-updated" content="2026-11-27T22:19:21+05:00">
+<meta name="app-index-version" content="v232">
+<meta name="app-index-version-name" content="Centralized Bilingual Translation Registry">
+<meta name="app-index-updated" content="2026-11-27T20:18:11+05:00">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Mobile Hisab by Z Mobile</title>
-<meta name="app-version" content="Index v240">
-<meta name="app-version-date-pkt" content="27 Nov 2026 10:19 PM PKT">
+<meta name="app-version" content="Index v235">
+<meta name="app-version-date-pkt" content="27 Nov 2026 08:18 PM PKT">
 <meta name="app-index-change-summary" content="Urdu sync status now clearly distinguishes syncing, successful sync, offline pending saves, and sync failures; sync state logic and detailed account errors are preserved.">
 <meta name="application-name" content="Mobile Hisab">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -93,9 +93,9 @@ window.__MHE.legacy({"u":{"Apne Mobile Hisab اکاؤنٹ mein login karein. Aap
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
 <link rel="manifest" href="manifest.json?v=27">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#0f1115">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mobile Hisab">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -2457,7 +2457,7 @@ body.mh-urdu-mode .date-time-field.is-unknown .date-time-control-row::before { c
           <div class="menu-footer-logo"><img src="icon-192.png" alt="Z Mobile"></div>
           <div><div class="menu-footer-name">Z Mobile</div><div class="menu-footer-sub">Mobile Hisab</div></div>
         </div>
-        <div class="menu-footer-version" id="menuFooterVersion">Index v240<span>Updated: 27 Nov 2026 • 10:19 PM PKT</span><span>Complete Mobile UI Visual System</span></div>
+        <div class="menu-footer-version" id="menuFooterVersion">Index v235<span>Updated: 27 Nov 2026 • 08:36 PM PKT</span><span>Urdu Analytics Professional Polish</span></div>
       </div>
     </div>
 
@@ -3592,14 +3592,13 @@ body.mh-urdu-mode .date-time-field.is-unknown .date-time-control-row::before { c
         </div>
         <div class="settings-section-card" style="margin-top:12px;">
           <div class="sec-label">App Version Details</div>
-          <div style="font-weight:800;font-size:16px;margin-top:8px;">Index v240</div>
-          <div class="settings-note" style="margin-top:4px;">Complete Mobile UI Visual System</div>
-          <div class="settings-note" style="margin-top:10px;"><b>Last updated:</b> 27 Nov 2026 • 10:19 PM PKT</div>
-          <div class="settings-note" style="margin-top:8px;"><b>Latest changes:</b> Completed the eight-phase UI-only visual refinement: semantic colors and contrast, typography, touch targets, layer scale, header and inventory hierarchy, sheets, payments, dashboard, settings, authentication, drawer, splash controls and Urdu/RTL presentation. Existing features, calculations, fields, translations, Firebase, data and business behavior are unchanged.</div>
+          <div style="font-weight:800;font-size:16px;margin-top:8px;">Index v235</div>
+          <div class="settings-note" style="margin-top:4px;">Centralized Bilingual Translation Registry</div>
+          <div class="settings-note" style="margin-top:10px;"><b>Last updated:</b> 27 Nov 2026 • 07:43 PM PKT</div>
+          <div class="settings-note" style="margin-top:8px;"><b>Latest changes:</b> Existing Urdu and English translation sources now register into one central runtime dictionary. The sync-status sentence also has a complete Urdu translation.</div>
         </div>
         <div class="settings-section-card" style="margin-top:12px;">
           <div class="sec-label">Version History</div>
-          <div style="font-weight:700;margin-top:9px;">Index v240 — 27 Nov 2026 • 10:19 PM PKT</div><div class="settings-note">Completed the eight-phase UI-only visual refinement: semantic colors and contrast, typography, touch targets, layer scale, header and inventory hierarchy, sheets, payments, dashboard, settings, authentication, drawer, splash controls and Urdu/RTL presentation. Existing features, calculations, fields, translations, Firebase, data and business behavior are unchanged.</div>
           <div style="font-weight:700;margin-top:9px;">Index v232 — 27 Nov 2026 • 07:43 PM PKT</div><div class="settings-note">Translation storage is centralized; the sync-status sentence now has a complete Urdu translation. Existing dynamic translation behavior is preserved.</div><div style="font-weight:700;margin-top:9px;">Index v231 — 27 Nov 2026 • 03:14 PM PKT</div><div class="settings-note">Automatic app-shell updates wait until local business changes and queued cloud activity history are safely synced.</div><div style="font-weight:700;margin-top:9px;">Index v230 — 27 Nov 2026 • 02:54 PM PKT</div><div class="settings-note">English mode now displays “Contact Us”; Urdu mode retains “ہم سے رابطہ کریں”. Existing button action is unchanged.</div><div style="font-weight:700;margin-top:9px;">Index v229 — 27 Nov 2026 • 02:46 PM PKT</div><div class="settings-note">Corrected the PWA manifest link to manifest.json so Chrome can load the manifest using the agreed filename.</div>
           <div style="font-weight:700;margin-top:9px;">Index v213 — 20 Nov 2026 • 10:25 PM PKT</div><div class="settings-note">Applied all 98 user-approved English translations for Roman Urdu and mixed-language interface phrases across search, entry, cloud/backup, analytics, ads/settings, demo and payments. Urdu and Roman Urdu wording, app UI, calculations, Firebase, stored data and business behavior are preserved.</div>
           <div style="font-weight:700;margin-top:9px;">Index v204 — 20 Nov 2026 • 06:56 PM PKT</div><div class="settings-note">Completed the supplied Urdu translation review: localized mixed Roman Urdu/Hinglish labels, demo and login text, analytics headings, settings and ad-manager wording, payment/contact labels, and corrected awkward Urdu alerts and status text. English-mode wording, calculations, demo data, Firebase and all unrelated behavior are preserved.</div>
@@ -3705,9 +3704,9 @@ if(menuSafeClose) menuSafeClose.addEventListener('click',function(e){
   if(typeof syncMenuOpenState==='function') syncMenuOpenState();
 });
 
-const APP_INDEX_VERSION = 'v240';
-const APP_INDEX_VERSION_NAME = 'Complete Mobile UI Visual System';
-const APP_INDEX_UPDATED = '2026-11-27T22:19:21+05:00';
+const APP_INDEX_VERSION = 'v235';
+const APP_INDEX_VERSION_NAME = 'Urdu Analytics Professional Polish';
+const APP_INDEX_UPDATED = '2026-11-27T20:36:18+05:00';
 
 let inventory = [];
 
@@ -15039,369 +15038,6 @@ body.mh-urdu-mode :is(.badge,.badges,.toast,.save-error-banner,.empty) {
   }
 }
 </style>
-
-
-<style id="mh-ui-fix-v240">
-/* Mobile Hisab v240 — consolidated UI-only overrides.
-   Phase 1 G1-G3: semantic colors, contrast, light-theme banners.
-   Phase 2 G4-G7: typography, hit areas, z-index and spacing scales.
-   Phase 3 S1-S3: header, stats, banners, search and filters.
-   Phase 4 S4-S5: inventory cards and FAB hierarchy.
-   Phase 5 S6-S7: purchase and sale sheets.
-   Phase 6 S8-S9: pending payments, customer book, dashboard, analytics, reports.
-   Phase 7 S10-S13: settings, auth, drawer and splash controls.
-   Phase 8 S14: Urdu/RTL and final responsive safeguards.
-   No JavaScript, feature, calculation, data, translation or Firebase behavior changed. */
-:root{
-  /* G1-G3 — semantic color system; white + red brand identity retained. */
-  --brand:#e51f32;
-  --brand-pressed:#b42332;
-  --danger:#b42318;
-  --success:#146c43;
-  --warning:#8a4b08;
-  --info:#175cd3;
-  --neutral:#525866;
-  --text:#191b22;
-  --text-dim:#525866;
-  --text-muted:#667085;
-  --text-faint:#667085;
-  --border:#e4e5e9;
-  --border-strong:#cfd1d8;
-  --surface:#ffffff;
-  --surface-2:#f8f8fa;
-  --surface-3:#f1f2f5;
-  --brand-bg:#fff1f2;
-  --danger-bg:#fef0ee;
-  --success-bg:#eaf6ef;
-  --warning-bg:#fff4e5;
-  --info-bg:#eff6ff;
-  --neutral-bg:#f2f4f7;
-  --pta:#146c43;
-  --pta-bg:#eaf6ef;
-  --nonpta:#8a4b08;
-  --nonpta-bg:#fff4e5;
-  --cpid:#b42318;
-  --cpid-bg:#fef0ee;
-  --jv:#175cd3;
-  --jv-bg:#eff6ff;
-  --bypass:#9f1239;
-  --bypass-bg:#fff1f2;
-
-  /* G4-G7 — type, spacing, radius, elevation and layer scales. */
-  --type-12:12px; --type-13:13px; --type-14:14px; --type-16:16px;
-  --type-18:18px; --type-22:22px; --type-28:28px;
-  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
-  --space-6:24px; --space-8:32px;
-  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
-  --elevation-1:0 1px 3px rgba(16,24,40,.06);
-  --elevation-2:0 3px 10px rgba(16,24,40,.08);
-  --elevation-3:0 10px 28px rgba(16,24,40,.14);
-  --tap:44px;
-  --z-header:20; --z-fab:40; --z-overlay:1000; --z-sheet:1010;
-  --z-toast:2500; --z-splash:10020;
-
-  /* Compatibility aliases used by existing styles. */
-  --bg:#fff; --accent:var(--brand); --accent-text:#fff;
-  --sale:var(--brand); --radius:var(--radius-md);
-  --card:var(--surface); --input-bg:var(--surface);
-  --profit:var(--success);
-  color-scheme:light;
-}
-
-/* G1/G2 — keep brand red for primary actions and selected states only. */
-.btn-primary,.btn-save,.auth-primary,.sell-btn{
-  background:var(--brand);
-  border-color:var(--brand);
-  color:#fff;
-}
-.btn-primary:active,.btn-save:active,.auth-primary:active,.sell-btn:active{
-  background:var(--brand-pressed);
-  border-color:var(--brand-pressed);
-}
-.btn-danger,.delete-btn,.card-actions .delete,.menu-item.danger,
-button[id*="Delete"],button[class*="delete"],.manual-due-delete{
-  color:var(--danger);
-  background:transparent;
-  border:1px solid rgba(180,35,24,.38);
-  box-shadow:none;
-}
-.btn-danger:active,.delete-btn:active,.card-actions .delete:active,
-.menu-item.danger:active,button[id*="Delete"]:active,
-button[class*="delete"]:active,.manual-due-delete:active{
-  background:var(--danger-bg);
-}
-/* Inline destructive controls keep their original handlers; only presentation changes. */
-.menu-item.danger{color:var(--danger)!important;background:transparent!important;}
-.fab-expense{
-  background:#fff!important;color:var(--brand)!important;
-  border:1.5px solid var(--brand)!important;
-  box-shadow:var(--elevation-2)!important;
-}
-.fab{background:var(--brand)!important;color:#fff!important;border:1px solid var(--brand)!important;}
-
-/* G2/G3 — high-contrast semantic values and theme-consistent notices. */
-.profit,.profit-pos,.grossProfit,.netProfit,.mobileProfit,.profit-preview,
-.analytics-model-profit,.rent-profit-stat{color:var(--success);}
-.profit-neg{color:var(--danger);}
-.account-status-line{color:var(--success)!important;}
-input::placeholder,textarea::placeholder{color:#667085;opacity:1;}
-:root{--text-muted:#667085;}
-.offline-banner,.backup-reminder,#syncConflictBanner,.save-error-banner{
-  color:var(--text-dim);
-  background:var(--info-bg);
-  border:1px solid #b2ccff;
-  border-radius:var(--radius-md);
-  padding:10px 12px;
-  font-size:var(--type-13);
-  line-height:1.45;
-  box-shadow:none;
-}
-.offline-banner{background:var(--info-bg);border-color:#b2ccff;color:#1849a9;}
-.backup-reminder{background:var(--warning-bg);border-color:#f5c77e;color:#7a3e06;}
-#syncConflictBanner,.save-error-banner{background:var(--danger-bg);border-color:#f3b5ae;color:#912018;}
-.backup-reminder button{
-  min-height:var(--tap);background:#fff;color:var(--warning);
-  border:1px solid #d9a441;border-radius:var(--radius-sm);
-  padding:8px 12px;font-size:var(--type-12);
-}
-.backup-reminder .dismiss{background:transparent;color:var(--warning);border-color:currentColor;}
-
-/* Semantic status badges. */
-.badge.pta,.pta-badge{color:var(--pta);background:var(--pta-bg);border-color:#a6d7ba;}
-.badge.nonpta,.nonpta-badge{color:var(--nonpta);background:var(--nonpta-bg);border-color:#e9c27c;}
-.badge.cpid,.cpid-badge{color:var(--cpid);background:var(--cpid-bg);border-color:#efb4ad;}
-.badge.jv,.jv-badge{color:var(--jv);background:var(--jv-bg);border-color:#b2ccff;}
-.badge.bypass,.bypass-badge{color:var(--bypass);background:var(--bypass-bg);border-color:#f4b4c4;}
-
-/* G4/G7 — readable type and consistent field rhythm. */
-html,body{color:var(--text);background:var(--surface);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
-body{font-size:var(--type-14);}
-:is(.settings-note,.settings-category-sub,.card-sub,.stat .l,.field label,
-    .settings-card label,.settings-section-card label,.account-meta-label,
-    .sold-detail-heading,.price-hint,.auth-subtitle,.menu-footer-version,
-    .privacy-popover,.privacy-hint,.badge,.status-badge){
-  font-size:max(12px, var(--type-13));
-  line-height:1.45;
-  color:var(--text-dim);
-}
-label,.field label,.settings-card label,.settings-section-card label{
-  color:var(--text-dim);
-  font-size:var(--type-13);
-  font-weight:650;
-  margin-bottom:6px;
-}
-input:not([type=checkbox]):not([type=radio]):not([type=range]),
-select,textarea,.field input,.field select,.field textarea{
-  min-height:44px;
-  font-size:16px;
-  color:var(--text);
-}
-textarea{min-height:88px;}
-button,.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab,
-[role=button],a.button-like{
-  min-height:var(--tap);
-  touch-action:manipulation;
-}
-button svg{width:20px;height:20px;}
-.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab{
-  padding:9px 13px;
-  line-height:1.35;
-}
-:focus-visible{outline:2px solid var(--info);outline-offset:2px;}
-/* G6 — normalize common stacking contexts while preserving intended layer order. */
-header{z-index:var(--z-header);}
-.fab,.fab-expense{z-index:var(--z-fab);}
-.overlay{z-index:var(--z-overlay);}
-.sheet,.settings-shell,.account-shell,.app-lock-shell{z-index:var(--z-sheet);}
-.toast{z-index:var(--z-toast);}
-#splashScreen,#startupSplash,.splash-screen,.splash-ad-overlay{z-index:var(--z-splash)!important;}
-/* Existing inline modal/splash layers may require !important to preserve their current order. */
-#syncConflictBanner{position:relative;}
-
-/* S1 — header controls balanced; no control removed or hidden. */
-header{box-shadow:0 1px 5px rgba(16,24,40,.06)!important;border-bottom:1px solid var(--border)!important;}
-.header-top{
-  display:flex;align-items:center;gap:4px;min-height:68px!important;
-  border-bottom:0!important;margin-bottom:8px!important;
-  padding:8px 8px 10px!important;
-}
-.header-top h1{
-  flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;font-size:clamp(17px,4.7vw,22px)!important;
-}
-.header-top :is(button,.menu-btn,.history-icon-btn,#adminNotificationBtn,#quickPrivacyHeaderBtn){
-  flex:0 0 auto;min-width:44px;min-height:44px;
-  display:inline-flex;align-items:center;justify-content:center;
-}
-.history-icon-btn,.menu-btn,#adminNotificationBtn,#quickPrivacyHeaderBtn{font-size:20px!important;}
-.header-top svg{width:19px;height:19px;}
-.privacy-popover,.privacy-hint,.privacy-popover-hint{font-size:12px;line-height:1.5;padding:8px 10px;}
-
-/* S2 — compact sticky region and resilient stat numbers. */
-.stats{gap:8px;}
-.stat{min-width:0;overflow:hidden;padding:10px 7px;}
-.stat .v{
-  min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;font-size:clamp(14px,3.8vw,19px);
-  font-weight:800;font-variant-numeric:tabular-nums;
-}
-.stat .l{font-size:12px!important;line-height:1.25;white-space:normal;}
-header .offline-banner,header .backup-reminder,header #syncConflictBanner{margin:6px 0;padding:7px 10px;}
-/* S3 — search/filter system and scroll affordance. */
-.search-row input,.search-row select{border-radius:var(--radius-md);}
-.chips-scroll{
-  display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;
-  scrollbar-width:thin;scrollbar-color:#c7cbd3 transparent;
-  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 94%,transparent 100%);
-  mask-image:linear-gradient(to right,#000 0%,#000 94%,transparent 100%);
-}
-.chips-scroll::-webkit-scrollbar{height:3px;}
-.chips-scroll::-webkit-scrollbar-thumb{background:#c7cbd3;border-radius:99px;}
-.chips-scroll+ .chips-scroll{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
-.chip.active,.chip-opt.on,.settings-toggle-chip.active,.settings-opt.active,.access-tab.active{
-  background:var(--brand);border-color:var(--brand);color:#fff;
-}
-
-/* S4 — inventory hierarchy; out-of-stock state must not disable actions. */
-.card{border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--elevation-1);background:#fff;}
-.card-title{font-size:16px;font-weight:800;color:var(--text);}
-.card .piece-row{background:var(--surface-2);border:0;border-radius:var(--radius-sm);padding:9px 10px;}
-.card .sold-details{border:0;border-top:1px solid var(--border);border-radius:0;background:transparent;padding-top:10px;}
-.card .sell-range,.card .price-range{color:var(--text-dim);font-weight:650;}
-.card .profit,.card .profit-pos{font-weight:800;}
-.card.out-of-stock,.card.unavailable{opacity:1;}
-.card.out-of-stock :is(.card-title,.card-sub,.piece-row,.card-image,.mobile-thumb),
-.card.unavailable :is(.card-title,.card-sub,.piece-row,.card-image,.mobile-thumb){opacity:.58;}
-.card.out-of-stock :is(button,.card-actions,.sell-btn,.delete-btn),
-.card.unavailable :is(button,.card-actions,.sell-btn,.delete-btn){opacity:1;pointer-events:auto;}
-.card-actions{display:flex;gap:8px;flex-wrap:wrap;}
-.card-actions .sell-btn{flex:1 1 110px;min-height:44px;}
-.card-actions .delete-btn,.card-actions .delete{flex:0 0 auto;min-height:44px;}
-
-/* S5 — paired floating actions and safe-area spacing. */
-.fab,.fab-expense{
-  bottom:calc(18px + env(safe-area-inset-bottom,0px));
-  min-width:54px;min-height:54px;
-  box-shadow:var(--elevation-2);
-}
-.fab-expense{bottom:calc(82px + env(safe-area-inset-bottom,0px));}
-.fab-expense-label{font-size:12px;font-weight:700;}
-.app{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));}
-
-/* S6-S7 — Add/Edit and Sale sheets: grouped rhythm, stable action footer, clear profit. */
-.sheet{border-radius:18px 18px 0 0;}
-.sheet-head{padding:14px 16px;border-bottom:1px solid var(--border);}
-.sheet .field,.sheet .form-group{margin-bottom:14px;}
-.sheet .field label,.sale-sheet label{display:block;margin:0 0 6px;font-size:13px;font-weight:650;color:var(--text-dim);}
-.sheet :is(input:not([type=checkbox]):not([type=radio]),select,textarea){min-height:46px;font-size:16px;}
-.sheet :is(.chip,.chip-opt,.settings-opt){min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
-.sheet-actions,.sheet .sticky-actions,.sheet .form-actions{
-  background:rgba(255,255,255,.98);
-  border-top:1px solid var(--border);
-  box-shadow:0 -4px 14px rgba(16,24,40,.06);
-  padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));
-}
-.profit-preview{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 16px;border:1px solid #a6d7ba;border-radius:var(--radius-md);
-  background:var(--success-bg);font-size:14px;font-weight:700;
-}
-.profit-preview :is(b,strong,.value,.amount){font-size:clamp(22px,6vw,28px);font-weight:900;font-variant-numeric:tabular-nums;}
-
-/* S8 — payment direction is clear by wording; existing color/meaning mapping is preserved. */
-.manual-due-delete{color:var(--danger)!important;border-color:rgba(180,35,24,.45)!important;}
-#manualDueList .settings-note{color:var(--text-dim);}
-#manualDueList [style*="#16a34a"],#manualDueList [style*="#15803d"]{color:var(--success)!important;}
-#manualDueList [style*="#dc2626"],#manualDueList [style*="#b91c1c"]{color:var(--danger)!important;}
-/* S9 — three visual card levels and horizontal table affordance. */
-.analytics-score,.analytics-snapshot-item,.analytics-average-item,.analytics-pending-item,
-.report-summary,.cost-summary{border-color:var(--border);box-shadow:var(--elevation-2);background:#fff;}
-.analytics-card,.settings-card,.settings-section-card,.settings-category{
-  border-color:var(--border);box-shadow:var(--elevation-1);background:#fff;
-}
-.analytics-score{border-radius:var(--radius-lg);}
-table{font-variant-numeric:tabular-nums;}
-.table-scroll,.table-wrap,.report-table-wrap,.monthly-table-wrap{
-  overflow-x:auto;overscroll-behavior-x:contain;
-  box-shadow:inset -12px 0 12px -14px rgba(16,24,40,.55);
-}
-.table-scroll table th:first-child,.table-wrap table th:first-child,
-.monthly-table-wrap table th:first-child{position:sticky;left:0;z-index:2;background:#fff;}
-.report-actions,.expenses-actions,.report-bottom-actions,.expenses-bottom-actions{
-  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
-  background:rgba(255,255,255,.98);border-top:1px solid var(--border);
-  box-shadow:0 -4px 14px rgba(16,24,40,.06);
-}
-
-/* S10 — settings switches and notes. */
-.settings-note{font-size:12px;line-height:1.55;color:var(--text-dim);}
-.settings-toggle-chip,.settings-opt{border-radius:var(--radius-pill);font-weight:700;}
-.settings-toggle-chip.on,.settings-opt.on,.settings-toggle-chip.active,.settings-opt.active{
-  color:var(--success);background:var(--success-bg);border-color:#a6d7ba;
-}
-.settings-toggle-chip.off,.settings-opt.off{color:var(--neutral);background:var(--neutral-bg);border-color:#d0d5dd;}
-/* S11 — Auth hierarchy; signup layout remains in its existing row and order. */
-.auth-card{border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--elevation-2);}
-.auth-title{font-size:22px;font-weight:850;color:var(--text);}
-.auth-primary{min-height:48px;font-size:15px;font-weight:800;}
-.auth-card .btn-secondary,.auth-card .btn-cancel{min-height:48px;border-color:#b8bec8!important;}
-.auth-card label{font-size:13px;color:var(--text-dim);font-weight:700;}
-/* S12 — drawer danger action separated visually; footer readable. */
-.menu-dropdown{background:#fff;border-right:1px solid var(--border);box-shadow:var(--elevation-3);}
-.menu-item{min-height:44px;border-radius:var(--radius-md);}
-.menu-item.danger{border-top:1px solid var(--border);margin-top:8px;padding-top:10px;color:var(--danger)!important;}
-.menu-footer-version{font-size:12px!important;color:var(--text-dim);line-height:1.5;}
-/* S13 — splash controls: visible, touch friendly and on top of app layers. */
-#splashScreen button,.splash-screen button,.splash-ad-overlay button,
-#startupSplash button,[id*="splashAd"] button{
-  min-width:44px;min-height:44px;
-}
-#splashScreen,#startupSplash,.splash-screen,.splash-ad-overlay{
-  color:var(--text);background:#fff;
-}
-
-/* S14 — Urdu/RTL: preserve LTR numeric runs without forcing all card content left. */
-body.mh-urdu-mode{line-height:1.65;}
-body.mh-urdu-mode :is(button,.btn-primary,.btn-secondary,.btn-save,.btn-cancel,.sell-btn,.auth-primary,.chip,.chip-opt,.settings-opt,.access-tab){
-  min-height:44px;height:auto;line-height:1.45;padding-top:9px;padding-bottom:9px;
-}
-body.mh-urdu-mode :is(.num,input[type=number],input[type=tel],input[type=email],
-  input[type=date],input[type=time],input[inputmode=numeric],.stat .v,
-  .analytics-score-value,.analytics-snapshot-value){
-  direction:ltr;unicode-bidi:isolate;text-align:left;
-}
-body.mh-urdu-mode :is(.stat,.card,.piece-row,.settings-card,.analytics-card,
-  .analytics-score,.report-summary,.cost-summary) :is(.amount,.value,.price,.profit){
-  direction:ltr;unicode-bidi:isolate;
-}
-body.mh-urdu-mode .header-top h1{text-align:start;}
-body.mh-urdu-mode .settings-note{line-height:1.65;}
-body.mh-urdu-mode .menu-footer-version{line-height:1.6;}
-
-/* Responsive QA safeguards: 320 / 360 / 390 / 480 px. */
-@media(max-width:380px){
-  .header-top{gap:2px;padding-left:6px!important;padding-right:6px!important;}
-  .header-top h1{font-size:16px!important;letter-spacing:-.25px;}
-  .header-top :is(button,.menu-btn,.history-icon-btn,#adminNotificationBtn,#quickPrivacyHeaderBtn){
-    min-width:40px;min-height:44px;
-  }
-  .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px!important;}
-  .stat{padding:8px 4px!important;}
-  .stat .v{font-size:clamp(12px,3.4vw,15px)!important;}
-  .stat .l{font-size:11.5px!important;}
-  .card{padding:10px!important;}
-  .fab{bottom:calc(16px + env(safe-area-inset-bottom,0px));}
-  .fab-expense{bottom:calc(78px + env(safe-area-inset-bottom,0px));}
-}
-@media(min-width:381px) and (max-width:520px){
-  .header-top{gap:4px;}
-  .stat .v{font-size:clamp(14px,3.7vw,18px);}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;}
-}
-</style>
-
 </body>
 </html>
 
@@ -15593,194 +15229,3 @@ body.mh-urdu-mode .menu-footer-version{line-height:1.6;}
 </style>
 
 
-
-<style id="mh-professional-ui-polish-2026-11-27">
-/* Mobile Hisab — UI-only professional polish (white + red brand system).
-   CSS presentation layer only. No feature, data, event, calculation or Firebase code changed. */
-:root{
-  --bg:#ffffff;
-  --surface:#ffffff;
-  --surface-2:#f8f8fa;
-  --surface-3:#f1f2f5;
-  --border:#e4e5e9;
-  --border-strong:#cfd1d8;
-  --text:#191b22;
-  --text-dim:#686b75;
-  --text-faint:#9295a0;
-  --accent:#e51f32;
-  --accent-text:#ffffff;
-  --danger:#d92d40;
-  --sale:#e51f32;
-  --radius:13px;
-  color-scheme:light;
-}
-html,body{
-  background:#fff;
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overscroll-behavior-x:none;
-}
-body{min-height:100vh;min-height:100dvh;}
-.app{
-  background:#fff;
-  min-height:100vh;
-  min-height:100dvh;
-  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
-}
-/* Brand header: replace the old navy strip with the established white/red identity. */
-header{
-  background:rgba(255,255,255,.97)!important;
-  border-bottom:1px solid #e8e8ec!important;
-  box-shadow:0 2px 12px rgba(25,27,34,.045)!important;
-  padding-top:env(safe-area-inset-top,0px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
-  backdrop-filter:saturate(160%) blur(12px);
-}
-.header-top{
-  background:#fff!important;
-  color:#191b22!important;
-  border-bottom:2px solid #e51f32;
-  min-height:76px!important;
-  padding:10px 16px 12px!important;
-  margin:0 -16px 12px!important;
-}
-.header-top h1{color:#191b22!important;font-size:23px!important;font-weight:800!important;letter-spacing:-.45px!important;}
-.app-brand-by{color:#777984!important;font-size:12px!important;font-weight:600!important;}
-.history-icon-btn,.menu-btn,#adminNotificationBtn,#quickPrivacyHeaderBtn{color:#e51f32!important;}
-.menu-btn::after{font-size:28px!important;font-weight:500!important;}
-#adminNotificationBtn svg,#quickPrivacyHeaderBtn svg{stroke:#e51f32!important;}
-.account-status-line{color:#19945b!important;}
-/* Consistent bilingual language switch. */
-.mh-language-switch,.auth-language-switch{
-  background:#fff!important;
-  border:1px solid #e5dadd!important;
-  border-radius:10px!important;
-  box-shadow:0 1px 3px rgba(25,27,34,.05)!important;
-}
-.mh-language-switch button.active,.auth-language-switch button.active{
-  background:#e51f32!important;
-  border-color:#e51f32!important;
-  color:#fff!important;
-  box-shadow:0 2px 5px rgba(229,31,50,.18)!important;
-}
-.mh-language-switch button:not(.active),.auth-language-switch button:not(.active){color:#5f626d!important;}
-/* Unified surfaces and hierarchy. */
-.stat,.card,.settings-card,.settings-section-card,.settings-category,
-.report-summary,.cost-summary,.analytics-card,.analytics-score,
-.analytics-snapshot-item,.analytics-average-item,.analytics-pending-item,
-.access-request-card,.account-info-box{
-  border-color:#e6e7eb;
-  box-shadow:0 2px 9px rgba(25,27,34,.045);
-}
-.card{border-radius:14px!important;padding:14px!important;}
-.card-title{color:#191b22!important;font-weight:750!important;}
-.card-sub{color:#777984!important;}
-.stat{border-radius:12px!important;background:#fafafb!important;}
-.stat .v{color:#191b22!important;font-weight:750!important;font-variant-numeric:tabular-nums;}
-.stat .l{color:#737681!important;}
-.piece-row{border-radius:11px!important;background:#fafafb!important;}
-/* Forms: consistent field height, focus ring and readable placeholder contrast. */
-input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,
-.field input,.field select,.field textarea,.model-input-row input,.model-dropdown-btn{
-  border-radius:10px;
-  border-color:#d9dbe1;
-  font:inherit;
-}
-input:focus,select:focus,textarea:focus,
-.field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;
-  border-color:#e51f32!important;
-  box-shadow:0 0 0 3px rgba(229,31,50,.10)!important;
-}
-input::placeholder,textarea::placeholder{color:#999ca6;opacity:1;}
-/* Buttons and chips: consistent shape, contrast and touch feedback. */
-button,.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab{
-  -webkit-tap-highlight-color:transparent;
-  transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .12s ease;
-}
-.btn-primary,.btn-save,.sell-btn,.auth-primary,.fab,.fab-expense{
-  background:#e51f32!important;
-  border-color:#e51f32!important;
-  color:#fff!important;
-  box-shadow:0 3px 9px rgba(229,31,50,.16);
-}
-.btn-secondary,.btn-cancel{
-  background:#fff!important;
-  border:1px solid #d9dbe1!important;
-  color:#4e515b!important;
-}
-.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab{
-  border-radius:999px!important;
-}
-.chip.active,.chip-opt.on,.settings-toggle-chip.active,.settings-opt.active,.access-tab.active{
-  background:#e51f32!important;
-  border-color:#e51f32!important;
-  color:#fff!important;
-}
-.card-actions button,.activity-filter-row button{
-  border-radius:9px;
-  min-height:38px;
-}
-button:focus-visible,a:focus-visible,[role=button]:focus-visible{
-  outline:2px solid rgba(229,31,50,.75)!important;
-  outline-offset:2px;
-}
-button:active,.chip:active,.chip-opt:active{transform:scale(.985);}
-/* Sheets, dialogs and overlays. */
-.sheet,.settings-shell,.account-shell,.app-lock-shell{
-  border-color:#e5e6eb!important;
-  box-shadow:0 -8px 30px rgba(25,27,34,.10)!important;
-}
-.sheet-head{border-color:#ececf0;}
-.sheet-handle{background:#d4d5da!important;}
-.overlay{background:rgba(20,22,29,.42)!important;}
-/* Tables and numeric data. */
-table{border-collapse:separate;border-spacing:0;}
-th{color:#555964;font-weight:700;}
-td,th{border-color:#e8e9ed;}
-.num,.stat .v,.analytics-score-value,.analytics-snapshot-value{
-  font-variant-numeric:tabular-nums lining-nums;
-}
-/* Navigation drawer remains the same component and actions, with refined surfaces. */
-.menu-dropdown{box-shadow:14px 0 38px rgba(25,27,34,.16)!important;}
-.menu-profile{background:#fff!important;}
-.menu-item{border-radius:10px!important;}
-.menu-item:active{background:#fff3f4!important;}
-.menu-item.danger{color:#d92d40!important;}
-/* Urdu typography and RTL: preserve numeric identifiers and amounts in LTR. */
-body.mh-urdu-mode{
-  font-family:-apple-system,BlinkMacSystemFont,"Geeza Pro","Noto Naskh Arabic",Tahoma,Arial,sans-serif;
-  text-rendering:optimizeLegibility;
-}
-body.mh-urdu-mode :is(button,input,select,textarea,.chip,.chip-opt){font-family:inherit;}
-body.mh-urdu-mode :is(h1,h2,h3,h4,p,label,small,.card-title,.card-sub,.menu-item-text,.settings-category-title,.settings-category-sub,.sheet-head){line-height:1.75;}
-body.mh-urdu-mode :is(.num,input[type=number],input[type=tel],input[type=email],input[type=date],input[type=time],input[inputmode=numeric],.stat .v,.analytics-score-value,.analytics-snapshot-value){direction:ltr;unicode-bidi:isolate;text-align:left;}
-/* Small screens: avoid edge collisions and retain comfortable touch areas. */
-@media(max-width:520px){
-  .header-top{min-height:72px!important;padding:9px 12px 11px!important;}
-  .header-top h1{font-size:21px!important;}
-  .list{padding-left:12px!important;padding-right:12px!important;}
-  .search-row{padding-left:12px!important;padding-right:12px!important;}
-  .chips-scroll{padding-left:12px!important;padding-right:12px!important;}
-  .card{padding:12px!important;}
-  .fab{bottom:calc(22px + env(safe-area-inset-bottom,0px));}
-}
-@media(max-width:380px){
-  .header-top h1{font-size:19px!important;}
-  .stats{gap:6px!important;}
-  .stat{padding:9px 5px!important;}
-  .stat .v{font-size:16px!important;}
-  .stat .l{font-size:10px!important;}
-}
-@media(hover:hover) and (pointer:fine){
-  .card:hover{box-shadow:0 5px 16px rgba(25,27,34,.075);border-color:#d9dbe1;}
-  .menu-item:hover{background:#fff6f7!important;}
-  .btn-primary:hover,.btn-save:hover,.sell-btn:hover{filter:brightness(.97);}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;}
-}
-
-</style>
