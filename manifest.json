@@ -1,9 +1,9 @@
 {
   "name": "Mobile Hisab by Z Mobile",
   "short_name": "Mobile Hisab",
-  "id": "/mobile-ledger/",
-  "start_url": "/mobile-ledger/?v=26",
-  "scope": "/mobile-ledger/",
+  "id": "./",
+  "start_url": "./?v=228",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f1115",
   "theme_color": "#0f1115",
