@@ -93,9 +93,9 @@ window.__MHE.legacy({"u":{"Apne Mobile Hisab اکاؤنٹ mein login karein. Aap
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
 <link rel="manifest" href="manifest.json?v=27">
-<meta name="theme-color" content="#0f1115">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Mobile Hisab">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -15229,3 +15229,194 @@ body.mh-urdu-mode :is(.badge,.badges,.toast,.save-error-banner,.empty) {
 </style>
 
 
+
+<style id="mh-professional-ui-polish-2026-11-27">
+/* Mobile Hisab — UI-only professional polish (white + red brand system).
+   CSS presentation layer only. No feature, data, event, calculation or Firebase code changed. */
+:root{
+  --bg:#ffffff;
+  --surface:#ffffff;
+  --surface-2:#f8f8fa;
+  --surface-3:#f1f2f5;
+  --border:#e4e5e9;
+  --border-strong:#cfd1d8;
+  --text:#191b22;
+  --text-dim:#686b75;
+  --text-faint:#9295a0;
+  --accent:#e51f32;
+  --accent-text:#ffffff;
+  --danger:#d92d40;
+  --sale:#e51f32;
+  --radius:13px;
+  color-scheme:light;
+}
+html,body{
+  background:#fff;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overscroll-behavior-x:none;
+}
+body{min-height:100vh;min-height:100dvh;}
+.app{
+  background:#fff;
+  min-height:100vh;
+  min-height:100dvh;
+  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
+}
+/* Brand header: replace the old navy strip with the established white/red identity. */
+header{
+  background:rgba(255,255,255,.97)!important;
+  border-bottom:1px solid #e8e8ec!important;
+  box-shadow:0 2px 12px rgba(25,27,34,.045)!important;
+  padding-top:env(safe-area-inset-top,0px);
+  -webkit-backdrop-filter:saturate(160%) blur(12px);
+  backdrop-filter:saturate(160%) blur(12px);
+}
+.header-top{
+  background:#fff!important;
+  color:#191b22!important;
+  border-bottom:2px solid #e51f32;
+  min-height:76px!important;
+  padding:10px 16px 12px!important;
+  margin:0 -16px 12px!important;
+}
+.header-top h1{color:#191b22!important;font-size:23px!important;font-weight:800!important;letter-spacing:-.45px!important;}
+.app-brand-by{color:#777984!important;font-size:12px!important;font-weight:600!important;}
+.history-icon-btn,.menu-btn,#adminNotificationBtn,#quickPrivacyHeaderBtn{color:#e51f32!important;}
+.menu-btn::after{font-size:28px!important;font-weight:500!important;}
+#adminNotificationBtn svg,#quickPrivacyHeaderBtn svg{stroke:#e51f32!important;}
+.account-status-line{color:#19945b!important;}
+/* Consistent bilingual language switch. */
+.mh-language-switch,.auth-language-switch{
+  background:#fff!important;
+  border:1px solid #e5dadd!important;
+  border-radius:10px!important;
+  box-shadow:0 1px 3px rgba(25,27,34,.05)!important;
+}
+.mh-language-switch button.active,.auth-language-switch button.active{
+  background:#e51f32!important;
+  border-color:#e51f32!important;
+  color:#fff!important;
+  box-shadow:0 2px 5px rgba(229,31,50,.18)!important;
+}
+.mh-language-switch button:not(.active),.auth-language-switch button:not(.active){color:#5f626d!important;}
+/* Unified surfaces and hierarchy. */
+.stat,.card,.settings-card,.settings-section-card,.settings-category,
+.report-summary,.cost-summary,.analytics-card,.analytics-score,
+.analytics-snapshot-item,.analytics-average-item,.analytics-pending-item,
+.access-request-card,.account-info-box{
+  border-color:#e6e7eb;
+  box-shadow:0 2px 9px rgba(25,27,34,.045);
+}
+.card{border-radius:14px!important;padding:14px!important;}
+.card-title{color:#191b22!important;font-weight:750!important;}
+.card-sub{color:#777984!important;}
+.stat{border-radius:12px!important;background:#fafafb!important;}
+.stat .v{color:#191b22!important;font-weight:750!important;font-variant-numeric:tabular-nums;}
+.stat .l{color:#737681!important;}
+.piece-row{border-radius:11px!important;background:#fafafb!important;}
+/* Forms: consistent field height, focus ring and readable placeholder contrast. */
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,
+.field input,.field select,.field textarea,.model-input-row input,.model-dropdown-btn{
+  border-radius:10px;
+  border-color:#d9dbe1;
+  font:inherit;
+}
+input:focus,select:focus,textarea:focus,
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;
+  border-color:#e51f32!important;
+  box-shadow:0 0 0 3px rgba(229,31,50,.10)!important;
+}
+input::placeholder,textarea::placeholder{color:#999ca6;opacity:1;}
+/* Buttons and chips: consistent shape, contrast and touch feedback. */
+button,.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab{
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .12s ease;
+}
+.btn-primary,.btn-save,.sell-btn,.auth-primary,.fab,.fab-expense{
+  background:#e51f32!important;
+  border-color:#e51f32!important;
+  color:#fff!important;
+  box-shadow:0 3px 9px rgba(229,31,50,.16);
+}
+.btn-secondary,.btn-cancel{
+  background:#fff!important;
+  border:1px solid #d9dbe1!important;
+  color:#4e515b!important;
+}
+.chip,.chip-opt,.settings-toggle-chip,.settings-opt,.access-tab{
+  border-radius:999px!important;
+}
+.chip.active,.chip-opt.on,.settings-toggle-chip.active,.settings-opt.active,.access-tab.active{
+  background:#e51f32!important;
+  border-color:#e51f32!important;
+  color:#fff!important;
+}
+.card-actions button,.activity-filter-row button{
+  border-radius:9px;
+  min-height:38px;
+}
+button:focus-visible,a:focus-visible,[role=button]:focus-visible{
+  outline:2px solid rgba(229,31,50,.75)!important;
+  outline-offset:2px;
+}
+button:active,.chip:active,.chip-opt:active{transform:scale(.985);}
+/* Sheets, dialogs and overlays. */
+.sheet,.settings-shell,.account-shell,.app-lock-shell{
+  border-color:#e5e6eb!important;
+  box-shadow:0 -8px 30px rgba(25,27,34,.10)!important;
+}
+.sheet-head{border-color:#ececf0;}
+.sheet-handle{background:#d4d5da!important;}
+.overlay{background:rgba(20,22,29,.42)!important;}
+/* Tables and numeric data. */
+table{border-collapse:separate;border-spacing:0;}
+th{color:#555964;font-weight:700;}
+td,th{border-color:#e8e9ed;}
+.num,.stat .v,.analytics-score-value,.analytics-snapshot-value{
+  font-variant-numeric:tabular-nums lining-nums;
+}
+/* Navigation drawer remains the same component and actions, with refined surfaces. */
+.menu-dropdown{box-shadow:14px 0 38px rgba(25,27,34,.16)!important;}
+.menu-profile{background:#fff!important;}
+.menu-item{border-radius:10px!important;}
+.menu-item:active{background:#fff3f4!important;}
+.menu-item.danger{color:#d92d40!important;}
+/* Urdu typography and RTL: preserve numeric identifiers and amounts in LTR. */
+body.mh-urdu-mode{
+  font-family:-apple-system,BlinkMacSystemFont,"Geeza Pro","Noto Naskh Arabic",Tahoma,Arial,sans-serif;
+  text-rendering:optimizeLegibility;
+}
+body.mh-urdu-mode :is(button,input,select,textarea,.chip,.chip-opt){font-family:inherit;}
+body.mh-urdu-mode :is(h1,h2,h3,h4,p,label,small,.card-title,.card-sub,.menu-item-text,.settings-category-title,.settings-category-sub,.sheet-head){line-height:1.75;}
+body.mh-urdu-mode :is(.num,input[type=number],input[type=tel],input[type=email],input[type=date],input[type=time],input[inputmode=numeric],.stat .v,.analytics-score-value,.analytics-snapshot-value){direction:ltr;unicode-bidi:isolate;text-align:left;}
+/* Small screens: avoid edge collisions and retain comfortable touch areas. */
+@media(max-width:520px){
+  .header-top{min-height:72px!important;padding:9px 12px 11px!important;}
+  .header-top h1{font-size:21px!important;}
+  .list{padding-left:12px!important;padding-right:12px!important;}
+  .search-row{padding-left:12px!important;padding-right:12px!important;}
+  .chips-scroll{padding-left:12px!important;padding-right:12px!important;}
+  .card{padding:12px!important;}
+  .fab{bottom:calc(22px + env(safe-area-inset-bottom,0px));}
+}
+@media(max-width:380px){
+  .header-top h1{font-size:19px!important;}
+  .stats{gap:6px!important;}
+  .stat{padding:9px 5px!important;}
+  .stat .v{font-size:16px!important;}
+  .stat .l{font-size:10px!important;}
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover{box-shadow:0 5px 16px rgba(25,27,34,.075);border-color:#d9dbe1;}
+  .menu-item:hover{background:#fff6f7!important;}
+  .btn-primary:hover,.btn-save:hover,.sell-btn:hover{filter:brightness(.97);}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;}
+}
+
+</style>
