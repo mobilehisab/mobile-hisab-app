@@ -1,9 +1,8 @@
-
-/* Mobile Hisab offline shell cache — v45.
+/* Mobile Hisab offline shell cache — v46.
  * Keep this file beside index.html at the same hosted path/scope.
  * Firestore/Auth network calls are deliberately never cached.
  */
-const CACHE_NAME = 'mobile-hisab-shell-v45';
+const CACHE_NAME = 'mobile-hisab-shell-v46';
 const OLD_CACHE_PREFIX = 'mobile-hisab-shell-';
 const CORE_FILES = ['index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 const CDN_ASSETS = [
@@ -21,15 +20,16 @@ self.addEventListener('install', event => {
         const url = new URL(path, self.registration.scope).href;
         const response = await fetch(url, { cache: 'reload' });
         if (response.ok) await cache.put(url, response);
-      } catch (_) {}
+      } catch (_) { /* optional icon/manifest may not exist in every deployment */ }
     }
+    // Cache the SDK files so an already-authorized install can reopen offline.
     for (const url of CDN_ASSETS) {
       try {
         const response = await fetch(url, { mode: 'no-cors', cache: 'reload' });
         if (response && (response.ok || response.type === 'opaque')) await cache.put(url, response);
-      } catch (_) {}
+      } catch (_) { /* retain any previous cached SDK copy */ }
     }
-    await self.skipWaiting();
+    // Do not activate immediately. The page waits for pending local changes to sync.
   })());
 });
 
@@ -45,6 +45,7 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
+  // Never intercept Firestore/Auth/API traffic: it must reflect real network state.
   if (/firestore|identitytoolkit|securetoken|googleapis\.com\/v1|firebaseapp\.com/.test(url.hostname + url.pathname)) return;
 
   if (request.mode === 'navigate') {
@@ -77,6 +78,7 @@ self.addEventListener('fetch', event => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(request, { ignoreSearch: true });
       if (cached) {
+        // Refresh cache in the background when online, but never block cached UI.
         fetch(request).then(response => {
           if (response && (response.ok || response.type === 'opaque')) cache.put(request, response.clone()).catch(() => {});
         }).catch(() => {});
@@ -91,5 +93,12 @@ self.addEventListener('fetch', event => {
         throw error;
       }
     })());
+  }
+});
+
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });
