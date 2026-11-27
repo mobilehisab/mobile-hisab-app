@@ -12712,10 +12712,17 @@ function initFirebaseSync(){
         });
       } else {
         stopNotificationSubscriptions();
+        // An intentional user logout must never be mistaken for an offline
+        // Firebase session-restore failure.
+        var explicitLogout = false;
+        try {
+          explicitLogout = localStorage.getItem('mobileLedger_explicitLogout_v1') === '1';
+          if(explicitLogout) localStorage.removeItem('mobileLedger_explicitLogout_v1');
+        } catch(e){}
         // v83 offline fallback: if this browser previously authenticated and
         // Firebase cannot restore its session while offline, keep locally cached
         // data usable. No cloud writes are attempted without a Firebase user.
-        if(wasLoggedInBefore && activeShopStorageId){
+        if(!explicitLogout && wasLoggedInBefore && activeShopStorageId){
           userRole='shop'; userShopId=activeShopStorageId; userAccessStatus='active'; userAccessReason='';
           try{localStorage.setItem(LS_WAS_LOGGED_IN_KEY,'1');}catch(e){}
           const appEl=document.querySelector('.app');if(appEl)appEl.style.visibility='visible';
@@ -13626,10 +13633,25 @@ document.getElementById('btnAccountForgotPassword').onclick = function(){
 document.getElementById('btnAccountLogout').onclick = function(){
   if(!confirm('Is device se logout karna hai? Dobara use karne ke liye login zaroori hoga.')) return;
   stopNotificationSubscriptions();
-  try{localStorage.removeItem(LS_WAS_LOGGED_IN_KEY);}catch(e){}
-  fbAuth.signOut();
+  try{
+    localStorage.removeItem(LS_WAS_LOGGED_IN_KEY);
+    localStorage.setItem('mobileLedger_explicitLogout_v1','1');
+  }catch(e){}
+  fbAuth.signOut().catch(function(err){
+    try{localStorage.removeItem('mobileLedger_explicitLogout_v1');}catch(e){}
+    showAccountError(friendlyAuthError(err));
+  });
 };
-if(document.getElementById('btnAccessLogout')) document.getElementById('btnAccessLogout').onclick=function(){ try{localStorage.removeItem(LS_WAS_LOGGED_IN_KEY);}catch(e){} if(fbAuth) fbAuth.signOut(); };
+if(document.getElementById('btnAccessLogout')) document.getElementById('btnAccessLogout').onclick=function(){
+  try{
+    localStorage.removeItem(LS_WAS_LOGGED_IN_KEY);
+    localStorage.setItem('mobileLedger_explicitLogout_v1','1');
+  }catch(e){}
+  if(fbAuth) fbAuth.signOut().catch(function(err){
+    try{localStorage.removeItem('mobileLedger_explicitLogout_v1');}catch(e){}
+    showAccountError(friendlyAuthError(err));
+  });
+};
 if(document.getElementById('btnAccessRefresh')) document.getElementById('btnAccessRefresh').onclick=function(){ refreshAccessState(); };
 document.getElementById('btnEditShopProfile').onclick = function(){
   document.getElementById('edit-shopname').value = shopProfile.shopName || '';
