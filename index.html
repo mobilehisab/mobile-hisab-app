@@ -13546,13 +13546,26 @@ document.getElementById('btnAccountClose').onclick = function(){
   requestOverlayClose();
 };
 document.getElementById('btnAccountLogin').onclick = function(){
+  const loginButton = this;
+  if(loginButton.disabled) return;
   if(!firebaseReady()){ showAccountError('Sync abhi set up nahi hua (Firebase config missing).'); return; }
   const email = document.getElementById('acc-email').value.trim();
   const pass = document.getElementById('acc-password').value;
   if(!email || !pass){ showAccountError('Email aur password dono likhein.'); return; }
+
+  const originalButtonText = loginButton.textContent;
+  loginButton.disabled = true;
+  loginButton.setAttribute('aria-busy', 'true');
+  loginButton.textContent = 'Logging in...';
+
   fbAuth.signInWithEmailAndPassword(email, pass)
     .then(function(){ saveCurrentAccountEmail(email); showToast('✓ Login ho gaya — sync shuru.'); })
-    .catch(function(err){ showAccountError(friendlyAuthError(err)); });
+    .catch(function(err){
+      loginButton.disabled = false;
+      loginButton.removeAttribute('aria-busy');
+      loginButton.textContent = originalButtonText;
+      showAccountError(friendlyAuthError(err));
+    });
 };
 document.getElementById('acc-rent-type').addEventListener('change',function(){
   const rented=this.value==='rented';
