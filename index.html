@@ -12732,6 +12732,13 @@ function initFirebaseSync(){
           return;
         }
         hideMobileCloudStartupGate();
+        // Reset the login button after logout so the next login attempt is available.
+        var accountLoginButton = document.getElementById('btnAccountLogin');
+        if(accountLoginButton){
+          accountLoginButton.disabled = false;
+          accountLoginButton.removeAttribute('aria-busy');
+          accountLoginButton.textContent = 'Login';
+        }
         try{ localStorage.removeItem(LS_WAS_LOGGED_IN_KEY); }catch(e){}
         userRole = 'owner';
         userShopId = null;
