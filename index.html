@@ -21,7 +21,7 @@ INSTRUCTIONS FOR ANY AI/DEVELOPER RECEIVING THIS FILE:
 9. LOCKED FEATURE — NEW ACCOUNT SHOP RENT DEFAULT: In the Create Account flow, the shop type must default to "Rented" for every new account. Keep the Rent amount and Rent date fields visible/required when Rented is selected. The user may intentionally choose "Owned Shop"; do not remove that option or force rented after the user changes it. Never change, remove, hide, or alter this default behavior unless the user explicitly requests it. Treat this as a locked product requirement across all future AI edits.
 10. SIGNUP DEMO BUTTON LAYOUT: Keep the Demo button alongside the Create Account button in the signup action row. Keep the temporary-demo explanatory instruction directly below these buttons. Do not move the Demo button back to a separate standalone position unless explicitly requested.
 
-VERSION HISTORY (newest first):\n- Index v236 — Urdu Analytics RTL & Readability Refinement — 27 Nov 2026 • 08:53 PM PKT. Refined Urdu-only Analytics typography, RTL alignment, card grid balance, graph labels and chart spacing based on screen recording. English UI, chart colors, calculations, Firebase, data and app features are unchanged.
+VERSION HISTORY (newest first):\n- Index v237 — Urdu Analytics Thicker Graphs & Mobile Card Refinement — 27 Nov 2026. Increased Urdu-only analytics bar thickness, line-chart stroke weight, graph label readability and mobile model/detail card spacing. English UI, chart colors, calculations, Firebase, data and app features are unchanged.\n- Index v236 — Urdu Analytics RTL & Readability Refinement — 27 Nov 2026 • 08:53 PM PKT. Refined Urdu-only Analytics typography, RTL alignment, card grid balance, graph labels and chart spacing based on screen recording. English UI, chart colors, calculations, Firebase, data and app features are unchanged.
 - Index v235 — Urdu Analytics Professional Polish — 27 Nov 2026 • 08:36 PM PKT. Improved Urdu-only Analytics typography, RTL alignment, readable card hierarchy and spacing; localized monthly average descriptions and chart legends. English UI, chart design/colors, calculations, Firebase, data and app features are unchanged.\n- Index v234 — Urdu Sync Status Wording — 27 Nov 2026 • 08:18 PM PKT. Urdu sync status now clearly distinguishes syncing, successful sync, offline pending saves, and sync failures; sync state logic and detailed account errors are preserved.\n- Index v233 — Time Display Language Refresh — 27 Nov 2026 • 08:14 PM PKT. Refreshes existing mobile-card time labels after language changes; stored timestamps and calculations are unchanged.\n- Index v232 — Centralized Bilingual Translation Registry — 27 Nov 2026 • 07:43 PM PKT. Unified runtime translation storage into one canonical dictionary; preserved existing English/Urdu mappings and dynamic translation behavior, and added a complete Urdu sync-status phrase. No entries were removed without proof they were unused.
 - Index v231 — Safe Automatic App Updates After Offline Data Sync — 27 Nov 2026 • 03:14 PM PKT. Automatic app-shell updates wait until unsynced local business changes and queued cloud activity history are safely synced; offline business data is not cleared.\n- Index v230 — Contact Us English Label — 27 Nov 2026 • 02:54 PM PKT. English mode displays “Contact Us”; Urdu mode retains “ہم سے رابطہ کریں”.\n- Index v229 — Manifest Filename Alignment — 27 Nov 2026 • 02:46 PM PKT. Corrected the HTML manifest link to manifest.json so Chrome can load the manifest under the agreed filename.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:55 AM PKT. New account signup defaults to Rented (user can still select Owned); Demo button sits beside Create Account and its temporary-data note appears below. Added locked AI/developer instructions.\n- Index v228 — Contact Menu Urdu Label — 21 Nov 2026 • 08:45 AM PKT. Restored the orange rent-adjusted profit panel in dashboard and analytics rent cards; retained existing calculation and avoided double-deducting paid rent.\n- Index v210 — English Translation Improvements — 20 Nov 2026 • 10:08 PM PKT. Expanded English-mode coverage for hardcoded Urdu/Roman Urdu labels, analytics headings, descriptions, graph labels, stock-entry title, and dynamic sync status. Urdu and Roman Urdu wording, app UI, calculations, Firebase, stored data and business behavior are preserved.
 - Index v209 — Unified Translation Dictionary — 20 Nov 2026 • 07:57 PM PKT. Repaired legacy translation registration: Urdu/English mappings now merge instead of replacing existing mappings; consolidated Share/Feedback/Contact/About labels into the original dictionary and removed the duplicate registration call. Preserved approved v207 translation content, app features, Firebase, data and business calculations.\n- Index v207 — Complete Urdu Label Coverage — 20 Nov 2026 • 06:56 PM PKT. Completed the supplied Urdu translation review: localized mixed Roman Urdu/Hinglish labels, demo and login text, analytics headings, settings and ad-manager wording, payment/contact labels, and corrected awkward Urdu alerts and status text. English-mode wording, calculations, demo data, Firebase and all unrelated behavior are preserved.\n- Index v203 — Demo Monthly Analytics Empty-State Fix — 20 Nov 2026 • 01:50 PM PKT. Fixed the monthly performance renderer aborting in temporary Demo mode when the optional soldHistory global is absent. Monthly history now derives its earliest date safely from demo inventory purchase and sale dates, and supports optional soldHistory without throwing. Demo data, calculations, Firebase, UI outside this analytics fix and non-demo behavior are preserved.\n- Index v172 — Busiest Hours Separated Axis Labels — 14 Nov 2026 • 08:15 AM PKT. Replaced combined time-range labels with individually spaced hour markers (9, 12, 3, 6, 9) on grouped business-hour charts; underlying hourly data, grouping, calculations and day/night ranges are unchanged.
@@ -1331,6 +1331,42 @@ body.mh-urdu-mode .analytics-sheet .analytics-apply-btn{font-size:12px;min-heigh
  body.mh-urdu-mode .analytics-sheet .analytics-mini-label{font-size:8px;}
 }
 
+
+
+/* v237: Urdu-only Analytics graph weight, label clarity and mobile-card layout. */
+body.mh-urdu-mode .analytics-sheet .analytics-brand-track{height:14px;border-radius:8px;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-track{height:21px;border-radius:6px;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-pair{gap:5px;}
+body.mh-urdu-mode .analytics-sheet .analytics-weekday-metrics{gap:6px;}
+body.mh-urdu-mode .analytics-sheet .analytics-mini-track{height:19px;border-radius:6px;}
+body.mh-urdu-mode .analytics-sheet .analytics-time-value,
+body.mh-urdu-mode .analytics-sheet .analytics-mini-label{font-size:10.5px;font-weight:900;}
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap svg polyline,
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap svg path[stroke],
+body.mh-urdu-mode .analytics-sheet .analytics-month-chart svg polyline,
+body.mh-urdu-mode .analytics-sheet .analytics-month-chart svg path[stroke]{stroke-width:3.1px!important;stroke-linecap:round;stroke-linejoin:round;}
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap svg circle,
+body.mh-urdu-mode .analytics-sheet .analytics-month-chart svg circle{r:4px;}
+body.mh-urdu-mode .analytics-sheet .analytics-line-wrap svg text,
+body.mh-urdu-mode .analytics-sheet .analytics-month-chart svg text{font-size:11px!important;}
+body.mh-urdu-mode .analytics-sheet .analytics-legend,
+body.mh-urdu-mode .analytics-sheet .analytics-brand-legend,
+body.mh-urdu-mode .analytics-sheet .analytics-time-legend{font-size:12.5px;gap:10px 16px;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-row{grid-template-columns:minmax(0,1fr) 58px minmax(76px,auto);gap:8px;padding:11px 10px;min-height:50px;align-items:center;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-name{font-size:13px;line-height:1.55;white-space:normal;overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-sold{font-size:12px;line-height:1.5;white-space:normal;}
+body.mh-urdu-mode .analytics-sheet .analytics-model-profit{font-size:12px;line-height:1.5;white-space:nowrap;}
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row{gap:12px;padding:10px 2px;line-height:1.8;}
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row > :first-child{min-width:0;overflow-wrap:anywhere;}
+body.mh-urdu-mode .analytics-sheet .analytics-detail-row > :last-child{flex:0 0 auto;white-space:nowrap;}
+@media(max-width:380px){
+ body.mh-urdu-mode .analytics-sheet .analytics-model-row{grid-template-columns:minmax(0,1fr) 48px minmax(72px,auto);gap:5px;padding:10px 8px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-model-name{font-size:12px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-model-sold,
+ body.mh-urdu-mode .analytics-sheet .analytics-model-profit{font-size:10.5px;}
+ body.mh-urdu-mode .analytics-sheet .analytics-time-value,
+ body.mh-urdu-mode .analytics-sheet .analytics-mini-label{font-size:9.5px;}
+}
 </style>
 <style id="badge-only-settings-style">
 .badge-only-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;}
