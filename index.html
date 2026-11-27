@@ -14378,6 +14378,13 @@ window.__MHE.enExtra = Object.assign(window.__MHE.enExtra || {}, {"Model likhein
     document.documentElement.lang=currentLanguage==='ur'?'ur':'en';
     document.body.classList.toggle('mh-urdu-mode',currentLanguage==='ur');
     scan(document.body);
+    // Re-render inventory cards after the language class changes so time labels
+    // are formatted in the newly selected language (AM/PM in English, Urdu
+    // day-part labels in Urdu). Stored timestamps and time calculations remain untouched.
+    if(typeof renderList==='function' && document.getElementById('list')){
+      renderList();
+      scan(document.getElementById('list'));
+    }
     if(typeof renderStats==='function')renderStats();
     if(typeof renderRentReminder==='function')renderRentReminder();
     ['mhLangEnglish','authLangEnglish'].forEach(function(id){var b=document.getElementById(id);if(b){b.classList.toggle('active',currentLanguage==='en');b.setAttribute('aria-pressed',String(currentLanguage==='en'));}});
